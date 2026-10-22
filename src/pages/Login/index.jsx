@@ -35,35 +35,65 @@ export default function Login() {
 
     return(
         <main className="login-page">
-            <section className="login-card">
-                <h1>Entrar</h1>
+            <div className="login-orbit login-orbit-one" />
+            <div className="login-orbit login-orbit-two" />
 
-                <form onSubmit={handleSubmit}>
-                    <label htmlFor="identificador">Usuário ou e-mail</label>
-                    <input
-                        id="identificador"
-                        name="identificador"
-                        type="text"
-                        value={identificador}
-                        onChange={(event) => setIdentificador(event.target.value)}
-                        required 
-                    />
+            <nav className="login-nav" aria-label="Navegação do login">
+                <a className="login-brand" href="/" aria-label="Voltar para a página inicial">
+                    <span>n</span>nexo
+                </a>
+                <a className="back-link" href="/">← Voltar ao início</a>
+            </nav>
 
-                    <label htmlFor="senha">Senha</label>
-                    <input 
-                        id="senha"
-                        name="senha"
-                        type="password"
-                        value={senha}
-                        onChange={(event) => setSenha(event.target.value)}
-                        required
-                    />
+            <section className="login-layout">
+                <div className="login-intro">
+                    <p className="login-eyebrow"><span>✦</span> Boas parcerias começam aqui</p>
+                    <h1>Entre e<br />faça <em>acontecer.</em></h1>
+                    <p>Encontre oportunidades, conecte-se às pessoas certas e transforme ideias em resultado.</p>
+                    <div className="login-note">
+                        <span>✦</span>
+                        <p>Uma comunidade para creators e marcas que querem criar conexões de verdade.</p>
+                    </div>
+                </div>
 
-                    {erro && <p>{erro}</p>}
+                <section className="login-card" aria-labelledby="login-title">
+                    <p className="card-kicker">BEM-VINDO DE VOLTA</p>
+                    <h2 id="login-title">Entrar na sua conta</h2>
+                    <p className="card-description">Use seus dados para continuar sua jornada.</p>
 
-                    <button type="submit">Entrar</button>
-                </form>
+                    <form onSubmit={handleSubmit}>
+                        <label htmlFor="identificador">Usuário ou e-mail</label>
+                        <input
+                            id="identificador"
+                            name="identificador"
+                            type="text"
+                            placeholder="seuemail@exemplo.com"
+                            value={identificador}
+                            onChange={(event) => setIdentificador(event.target.value)}
+                            required
+                        />
+
+                        <div className="password-label"><label htmlFor="senha">Senha</label><a href="#recuperar">Esqueci minha senha</a></div>
+                        <input
+                            id="senha"
+                            name="senha"
+                            type="password"
+                            placeholder="••••••••"
+                            value={senha}
+                            onChange={(event) => setSenha(event.target.value)}
+                            required
+                        />
+
+                        {erro && <p className="login-error" role="alert">{erro}</p>}
+
+                        <button type="submit">Entrar <span>→</span></button>
+                    </form>
+
+                    <p className="signup-prompt">Ainda não faz parte? <a href="#cadastro">Crie sua conta</a></p>
+                </section>
             </section>
+
+            <p className="login-footer">© 2025 nexo &nbsp;·&nbsp; Feito para boas conexões.</p>
         </main>
     );
 }
