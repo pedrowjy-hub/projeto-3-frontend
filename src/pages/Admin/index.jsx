@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import FormularioUsuario from "../../components/FormularioUsuario";
 import { useNavigate } from "react-router";
+import FormularioAssinatura from "../../components/FormularioAssinatura";
 import "./index.css";
 
 export default function PainelAdmin() {
@@ -13,6 +14,7 @@ export default function PainelAdmin() {
     const [mensagem, setMensagem] = useState("");
     const navigate = useNavigate();
     const [acesso, setAcesso] = useState("verificando");
+    const [usuarioAssinatura, setUsuarioAssinatura] = useState(null);
 
     async function carregarUsuarios() {
         try {
@@ -177,6 +179,13 @@ export default function PainelAdmin() {
 
                 {mensagem && <p className="admin-aviso" role="status">{mensagem}</p>}
                 {mostrarFormulario && <FormularioUsuario onUsuarioCadastrado={handleUsuarioCadastrado} onCancelar={() => setMostrarFormulario(false)} />}
+                {usuarioAssinatura && (
+                        <FormularioAssinatura
+                            key={usuarioAssinatura.username}
+                            usuario={usuarioAssinatura}
+                            onCancelar={() => setUsuarioAssinatura(null)}
+                        />
+                    )}
 
                 <section className="admin-usuarios" aria-labelledby="titulo-usuarios">
                     <div className="admin-lista-cabecalho">
@@ -201,8 +210,17 @@ export default function PainelAdmin() {
                                 <tr key={usuario.username}>
                                     <td><div className="admin-usuario"><span className="admin-avatar" aria-hidden="true">{(usuario.nome || usuario.username || "?").trim().slice(0, 2).toUpperCase()}</span><div><strong>{usuario.nome || "Sem nome"}</strong><span>@{usuario.username}</span></div></div></td>
                                     <td>{usuario.email || "—"}</td>
-                                    <td><span className="admin-tipo">{usuario.tipo || "Não informado"}</span></td>
-                                    <td><span className={`admin-assinatura ${usuario.assinatura === true ? "admin-assinatura-ativa" : ""}`}><span aria-hidden="true">●</span>{usuario.assinatura === true ? "Ativa" : "Sem assinatura"}</span></td>
+                                    <td><span className="admin-tipo">{usuario.tipo_perfil || "Não informado"}</span></td>
+                                    <td>
+                                        <div className="admin-assinatura-acoes">
+                                            <span className={`admin-assinatura ${usuario.assinatura === true ? "admin-assinatura-ativa" : ""}`}><span aria-hidden="true">●</span>{usuario.assinatura === true ? "Ativa" : "Sem assinatura"}</span>
+                                            <button
+                                                className="admin-botao admin-botao-secundario"
+                                                type="button"
+                                                onClick={() => setUsuarioAssinatura(usuario)}
+                                            >Alterar</button>
+                                        </div>
+                                    </td>
                                 </tr>
                             ))}</tbody>
                         </table>

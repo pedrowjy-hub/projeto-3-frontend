@@ -8,7 +8,7 @@ export default function FormularioUsuario({ onUsuarioCadastrado, onCancelar }) {
         username: "",
         email: "",
         contato: "",
-        tipo: "",
+        tipo_perfil: "",
         nicho: "",
         plataformas: "",
         senha: "",
@@ -100,9 +100,12 @@ export default function FormularioUsuario({ onUsuarioCadastrado, onCancelar }) {
                         placeholder="(11) 99999-9999" value={formulario.contato} onChange={handleChange} required />
                 </div>
                 <div className="usuario-form-campo">
-                    <label htmlFor="tipo">Tipo de usuário</label>
-                    <input id="tipo" name="tipo" type="text" placeholder="Ex.: empresa"
-                        value={formulario.tipo} onChange={handleChange} required />
+                    <label htmlFor="tipo_perfil">Tipo de perfil</label>
+                    <select id="tipo_perfil" name="tipo_perfil" value={formulario.tipo_perfil} onChange={handleChange} required>
+                        <option value="">Selecione</option>
+                        <option value="empresa">Empresa</option>
+                        <option value="influenciador">Influenciador</option>
+                    </select>
                 </div>
                 <div className="usuario-form-campo">
                     <label htmlFor="nicho">Nicho</label>
