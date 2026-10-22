@@ -95,6 +95,11 @@ export default function PainelAdmin() {
         setMensagem("Usuário cadastrado com sucesso!");
     }
 
+    function handleSair() {
+        localStorage.removeItem("access_token");
+        navigate("/login", { replace: true });
+    }
+
     if (acesso === "verificando") {
         return (
             <main className="admin-pagina admin-vazio">
@@ -147,6 +152,11 @@ export default function PainelAdmin() {
                     </a>
                     <span className="admin-area">Administração</span>
                     <span className="admin-perfil"><span aria-hidden="true">A</span> Painel de gestão</span>
+                    <button
+                        className="admin-botao admin-botao-secundario"
+                        type="button"
+                        onClick={handleSair}
+                    >Sair</button>
                 </div>
             </header>
 
