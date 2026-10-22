@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router";
 import "./index.css"
 
 
@@ -6,31 +7,59 @@ export default function Login() {
     const [identificador, setIdentificador] = useState("");
     const [senha,setSenha] = useState("");
     const [erro,setErro] = useState("");
+    const [enviando, setEnviando] = useState(false);
+    const [senhaVisivel, setSenhaVisivel] = useState(false);
+    const navigate = useNavigate();
 
     async function handleSubmit(event) {
         event.preventDefault();
         setErro("");
 
-        const resposta = await fetch("http://127.0.0.1:5000/login",{
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                identificador,
-                senha,
-            }),
-        });
-        
-        const dados = await resposta.json();
+        setEnviando(true);
 
-        if (!resposta.ok) {
-            setErro(dados.erro);
-            return;
+        try {
+            const resposta = await fetch("http://127.0.0.1:5000/login",{
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    identificador,
+                    senha,
+                }),
+            });
+            const dados = await resposta.json();
+
+            if (!resposta.ok) {
+                setErro(dados.erro || "Não foi possível entrar. Tente novamente.");
+                return;
+            }
+
+            localStorage.setItem("access_token", dados.access_token);
+
+            const verificacaoAdmin = await fetch("http://127.0.0.1:5000/admin", {
+                headers: {
+                    Authorization: `Bearer ${dados.access_token}`,
+                },
+            });
+
+            if (verificacaoAdmin.ok) {
+                navigate("/admin", { replace: true });
+                return;
+            }
+
+            if (verificacaoAdmin.status === 403 || verificacaoAdmin.status === 404) {
+                navigate("/inicio", { replace: true });
+                return;
+            }
+
+            localStorage.removeItem("access_token");
+            setErro("Não foi possível verificar seu acesso. Tente novamente.");
+        } catch {
+            setErro("Não foi possível conectar à API. Confira se ela está rodando.");
+        } finally {
+            setEnviando(false);
         }
-
-        localStorage.setItem("access_token", dados.access_token);
-        console.log("Login realizado!");
     }
 
     return(
@@ -74,19 +103,32 @@ export default function Login() {
                         />
 
                         <div className="password-label"><label htmlFor="senha">Senha</label><a href="#recuperar">Esqueci minha senha</a></div>
-                        <input
-                            id="senha"
-                            name="senha"
-                            type="password"
-                            placeholder="••••••••"
-                            value={senha}
-                            onChange={(event) => setSenha(event.target.value)}
-                            required
-                        />
+                        <div className="password-input">
+                            <input
+                                id="senha"
+                                name="senha"
+                                type={senhaVisivel ? "text" : "password"}
+                                placeholder="••••••••"
+                                value={senha}
+                                onChange={(event) => setSenha(event.target.value)}
+                                required
+                            />
+                            <button
+                                className="password-toggle"
+                                type="button"
+                                onClick={() => setSenhaVisivel(!senhaVisivel)}
+                                aria-label={senhaVisivel ? "Ocultar senha" : "Mostrar senha"}
+                                aria-pressed={senhaVisivel}
+                            >
+                                {senhaVisivel ? "Ocultar" : "Mostrar"}
+                            </button>
+                        </div>
 
                         {erro && <p className="login-error" role="alert">{erro}</p>}
 
-                        <button type="submit">Entrar <span>→</span></button>
+                        <button type="submit" disabled={enviando}>
+                            {enviando ? "Entrando..." : "Entrar"} <span>→</span>
+                        </button>
                     </form>
 
                     <p className="signup-prompt">Ainda não faz parte? <a href="#cadastro">Crie sua conta</a></p>

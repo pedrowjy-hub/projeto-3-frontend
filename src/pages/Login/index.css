@@ -52,6 +52,11 @@
 .login-card input { width: 100%; min-height: 47px; padding: 12px 13px; border: 1px solid #cbd5ce; border-radius: 5px; color: var(--ink); background: var(--paper); font: inherit; font-size: 13px; transition: border-color .2s, box-shadow .2s; }
 .login-card input::placeholder { color: #9ca9a4; }
 .login-card input:focus { border-color: var(--ink); outline: 0; box-shadow: 0 0 0 3px rgb(18 61 53 / 10%); }
+.password-input { position: relative; }
+.password-input input { padding-right: 76px; }
+.login-card .password-toggle { position: absolute; top: 50%; right: 8px; min-height: auto; margin: 0; padding: 6px 8px; transform: translateY(-50%); border: 0; color: var(--ink); background: transparent; font-size: 11px; }
+.login-card .password-toggle:hover { transform: translateY(-50%); color: #1d5147; background: #edf1e8; }
+.login-card .password-toggle:focus-visible { outline: 2px solid var(--ink); outline-offset: 1px; }
 .login-card button { display: flex; align-items: center; justify-content: space-between; margin-top: 17px; padding: 14px 17px; border: 1px solid var(--ink); border-radius: 5px; color: #fff; background: var(--ink); font: inherit; font-size: 12px; font-weight: 700; cursor: pointer; transition: background .2s, transform .2s; }
 .login-card button span { font-size: 19px; line-height: 12px; }
 .login-card button:hover { background: #1d5147; transform: translateY(-1px); }
