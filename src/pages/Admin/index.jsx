@@ -15,6 +15,7 @@ export default function PainelAdmin() {
     const navigate = useNavigate();
     const [acesso, setAcesso] = useState("verificando");
     const [usuarioAssinatura, setUsuarioAssinatura] = useState(null);
+    const [usuarioExcluindo, setUsuarioExcluindo] = useState(null);
 
     async function carregarUsuarios() {
         try {
@@ -108,6 +109,55 @@ export default function PainelAdmin() {
                 <p role="status">Verificando acesso...</p>
             </main>
         );
+    }
+
+    async function handleExcluirUsuario(usuario) {
+        const confirmou = window.confirm(`Deseja excluir o usuário "${usuario.username}"? Essa ação não pode ser desfeita.`);
+
+        if (!confirmou) {
+            return;
+        }
+
+        setUsuarioExcluindo(usuario.username);
+        setErro("");
+        setMensagem("");
+
+        try {
+            const token = localStorage.getItem("access_token");
+
+            const resposta = await fetch(`http://127.0.0.1:5000/usuarios/${encodeURIComponent(usuario.username)}`, {
+                method: "DELETE",
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                },
+            });
+
+            if (resposta.status === 401 || resposta.status === 422) {
+                localStorage.removeItem("access_token");
+                navigate("/login", { replace: true });
+                return;
+            }
+
+            if (!resposta.ok) {
+                const dados = await resposta.json();
+
+                throw new Error(dados.erro || "Não foi possível excluir o usuário.");
+            }
+
+            setMensagem(`Usuário @${usuario.username} excluído.`);
+
+            if (usuarioAssinatura?.username === usuario.username) {
+                setUsuarioAssinatura(null);
+            }
+
+            atualizarUsuarios();
+        } catch {
+            setErro(erro.message || "Não foi possível excluir o usuário.");
+        } finally {
+            setUsuarioExcluindo(null);
+        }
+
+        console.log("Exclusão confirmada para:", usuario.username);
     }
 
     if (acesso === "negado") {
@@ -205,7 +255,15 @@ export default function PainelAdmin() {
                     : <div className="admin-tabela-container">
                         <table className="admin-tabela">
                             <caption className="admin-sr-only">Usuários cadastrados</caption>
-                            <thead><tr><th scope="col">Usuário</th><th scope="col">E-mail</th><th scope="col">Tipo</th><th scope="col">Assinatura</th></tr></thead>
+                            <thead>
+                                <tr>
+                                    <th scope="col">Usuário</th>
+                                    <th scope="col">E-mail</th>
+                                    <th scope="col">Tipo</th>
+                                    <th scope="col">Assinatura</th>
+                                    <th scope="col">Ações</th>
+                                </tr>
+                            </thead>
                             <tbody>{usuariosDaPagina.map((usuario) => (
                                 <tr key={usuario.username}>
                                     <td><div className="admin-usuario"><span className="admin-avatar" aria-hidden="true">{(usuario.nome || usuario.username || "?").trim().slice(0, 2).toUpperCase()}</span><div><strong>{usuario.nome || "Sem nome"}</strong><span>@{usuario.username}</span></div></div></td>
@@ -220,6 +278,18 @@ export default function PainelAdmin() {
                                                 onClick={() => setUsuarioAssinatura(usuario)}
                                             >Alterar</button>
                                         </div>
+                                    </td>
+                                    <td>
+                                        <button
+                                            className="admin-botao admin-botao-secundario"
+                                            type="button"
+                                            disabled={usuarioExcluindo !== null}
+                                            onClick={() => handleExcluirUsuario(usuario)}
+                                        >
+                                            {usuarioExcluindo === usuario.username
+                                                ? "Excluindo..."
+                                                : "Excluir"}
+                                        </button>
                                     </td>
                                 </tr>
                             ))}</tbody>
