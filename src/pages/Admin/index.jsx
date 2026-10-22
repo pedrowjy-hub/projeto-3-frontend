@@ -1,25 +1,27 @@
 import { useState, useEffect } from "react";
+import FormularioUsuario from "../../components/FormularioUsuario";
 
 export default function PainelAdmin() {
     const [usuarios, setUsuarios] = useState([]);
     const [busca, setBusca] = useState("");
+    const [mostrarFormulario, setMostrarFormulario] = useState(false);
+
+    async function carregarUsuarios() {
+        try {
+            const resposta = await fetch("http://127.0.0.1:5000/usuarios");
+
+            if (!resposta.ok) {
+                throw new Error("Não foi possível carregar os usuários");
+            }
+
+            const dados = await resposta.json();
+            setUsuarios(dados);
+        } catch (erro) {
+            console.error("Erro ao buscar usuários:", erro);
+        }
+    }
 
     useEffect(() => {
-        async function carregarUsuarios() {
-            try {
-                const resposta = await fetch("http://127.0.0.1:5000/usuarios");
-
-                if (!resposta.ok) {
-                    throw new Error("Não foi possível carregar os usuários");
-                }
-
-                const dados = await resposta.json();
-                setUsuarios(dados);
-            } catch (erro) {
-                console.error("Erro ao buscar usuários:", erro);
-            }
-        }
-
         carregarUsuarios();
     }, []);
 
@@ -32,10 +34,24 @@ export default function PainelAdmin() {
         );
     });
 
+    function handleUsuarioCadastrado() {
+        carregarUsuarios();
+        setMostrarFormulario(false);
+    }
+
 
     return (
         <main>
             <h3>Painel administrativo</h3>
+
+            <button
+                type="button"
+                onClick={() => setMostrarFormulario(!mostrarFormulario)}
+            >
+                {mostrarFormulario ? "Cancelar" : "Adicionar usuário"}
+            </button>
+
+            {mostrarFormulario && <FormularioUsuario onUsuarioCadastrado={handleUsuarioCadastrado}/>}
 
             <label htmlFor="busca">Buscar usuário</label>
             <input
