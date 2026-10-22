@@ -1,4 +1,4 @@
-main {
+.login-page {
   display: grid;
   min-height: 100vh;
   padding: 24px;
@@ -6,7 +6,7 @@ main {
   background: #f4f7fb;
 }
 
-section {
+.login-card {
   width: min(100%, 400px);
   padding: 32px;
   border-radius: 16px;
@@ -14,26 +14,26 @@ section {
   box-shadow: 0 12px 30px rgb(15 23 42 / 12%);
 }
 
-h1 {
+.login-card h1 {
   margin: 0 0 24px;
   color: #1e293b;
   font-size: 2rem;
 }
 
-form {
+.login-card form {
   display: grid;
   gap: 10px;
   text-align: left;
 }
 
-label {
+.login-card label {
   margin-top: 8px;
   color: #334155;
   font-size: 0.9rem;
   font-weight: 600;
 }
 
-input {
+.login-card input {
   width: 100%;
   box-sizing: border-box;
   padding: 12px;
@@ -42,12 +42,12 @@ input {
   font: inherit;
 }
 
-input:focus {
+.login-card input:focus {
   border-color: #2563eb;
   outline: 3px solid rgb(37 99 235 / 18%);
 }
 
-button {
+.login-card button {
   margin-top: 16px;
   padding: 12px;
   border: 0;
@@ -59,11 +59,11 @@ button {
   cursor: pointer;
 }
 
-button:hover {
+.login-card button:hover {
   background: #1d4ed8;
 }
 
-form p {
+.login-card form p {
   margin-top: 8px;
   color: #b91c1c;
   font-size: 0.9rem;

@@ -34,8 +34,8 @@ export default function Login() {
     }
 
     return(
-        <main>
-            <section>
+        <main className="login-page">
+            <section className="login-card">
                 <h1>Entrar</h1>
 
                 <form onSubmit={handleSubmit}>
