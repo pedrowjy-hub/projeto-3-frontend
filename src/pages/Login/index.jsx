@@ -34,7 +34,7 @@ export default function Login() {
     }
 
     return(
-        <main>
+        <main className="login-pagina">
             <section>
                 <h1>Entrar</h1>
 
