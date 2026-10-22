@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import FormularioUsuario from "../../components/FormularioUsuario";
 import { useNavigate } from "react-router";
 import FormularioAssinatura from "../../components/FormularioAssinatura";
+import DetalhesUsuario from "../../components/DetalhesUsuario";
+import ConfirmarExclusao from "../../components/ConfirmarExclusao";
 import "./index.css";
 
 export default function PainelAdmin() {
@@ -16,6 +18,9 @@ export default function PainelAdmin() {
     const [acesso, setAcesso] = useState("verificando");
     const [usuarioAssinatura, setUsuarioAssinatura] = useState(null);
     const [usuarioExcluindo, setUsuarioExcluindo] = useState(null);
+    const [usuarioDetalhes, setUsuarioDetalhes] = useState(null);
+    const [usuarioParaExcluir, setUsuarioParaExcluir] = useState(null);
+    const [erroExclusao, setErroExclusao] = useState(null);
 
     async function carregarUsuarios() {
         try {
@@ -112,15 +117,10 @@ export default function PainelAdmin() {
     }
 
     async function handleExcluirUsuario(usuario) {
-        const confirmou = window.confirm(`Deseja excluir o usuário "${usuario.username}"? Essa ação não pode ser desfeita.`);
-
-        if (!confirmou) {
-            return;
-        }
-
         setUsuarioExcluindo(usuario.username);
         setErro("");
         setMensagem("");
+        setErroExclusao("");
 
         try {
             const token = localStorage.getItem("access_token");
@@ -150,9 +150,10 @@ export default function PainelAdmin() {
                 setUsuarioAssinatura(null);
             }
 
+            setUsuarioParaExcluir(null);
             atualizarUsuarios();
         } catch {
-            setErro(erro.message || "Não foi possível excluir o usuário.");
+            setErroExclusao(erro.message || "Não foi possível excluir o usuário.");
         } finally {
             setUsuarioExcluindo(null);
         }
@@ -197,6 +198,25 @@ export default function PainelAdmin() {
 
     return (
         <div className="admin-pagina">
+            {usuarioDetalhes && (
+                <DetalhesUsuario
+                    key={usuarioDetalhes.username}
+                    usuario={usuarioDetalhes}
+                    onFechar={() => setUsuarioDetalhes(null)}
+                />
+            )}
+            {usuarioParaExcluir && (
+                <ConfirmarExclusao
+                    usuario={usuarioParaExcluir}
+                    excluindo={usuarioExcluindo !== null}
+                    erro={erroExclusao}
+                    onCancelar={() => {
+                        setUsuarioParaExcluir(null);
+                        setErroExclusao("");
+                    }}
+                    onConfirmar={() => handleExcluirUsuario(usuarioParaExcluir)}
+                />
+            )}
             <header className="admin-topo">
                 <div className="admin-topo-conteudo">
                     <a className="admin-marca" href="/admin" aria-label="Nexo — painel administrativo">
@@ -266,7 +286,7 @@ export default function PainelAdmin() {
                             </thead>
                             <tbody>{usuariosDaPagina.map((usuario) => (
                                 <tr key={usuario.username}>
-                                    <td><div className="admin-usuario"><span className="admin-avatar" aria-hidden="true">{(usuario.nome || usuario.username || "?").trim().slice(0, 2).toUpperCase()}</span><div><strong>{usuario.nome || "Sem nome"}</strong><span>@{usuario.username}</span></div></div></td>
+                                    <td><div className="admin-usuario"><span className="admin-avatar" aria-hidden="true">{(usuario.nome || usuario.username || "?").trim().slice(0, 2).toUpperCase()}</span><div><button className="admin-usuario-link" type="button" onClick={() => setUsuarioDetalhes(usuario)}>{usuario.nome || "Sem nome"}</button><span>@{usuario.username}</span></div></div></td>
                                     <td>{usuario.email || "—"}</td>
                                     <td><span className="admin-tipo">{usuario.tipo_perfil || "Não informado"}</span></td>
                                     <td>
@@ -284,7 +304,7 @@ export default function PainelAdmin() {
                                             className="admin-botao admin-botao-secundario"
                                             type="button"
                                             disabled={usuarioExcluindo !== null}
-                                            onClick={() => handleExcluirUsuario(usuario)}
+                                            onClick={() => setUsuarioParaExcluir(usuario)}
                                         >
                                             {usuarioExcluindo === usuario.username
                                                 ? "Excluindo..."
