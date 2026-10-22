@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import FormularioUsuario from "../../components/FormularioUsuario";
+import { useNavigate } from "react-router";
 import "./index.css";
 
 export default function PainelAdmin() {
@@ -10,6 +11,8 @@ export default function PainelAdmin() {
     const [carregando, setCarregando] = useState(true);
     const [erro, setErro] = useState("");
     const [mensagem, setMensagem] = useState("");
+    const navigate = useNavigate();
+    const [acesso, setAcesso] = useState("verificando");
 
     async function carregarUsuarios() {
         try {
@@ -27,10 +30,45 @@ export default function PainelAdmin() {
     }
 
     useEffect(() => {
-        // A lista vem da API; os estados são atualizados após a resposta assíncrona.
-        // oxlint-disable-next-line react/set-state-in-effect
-        carregarUsuarios();
-    }, []);
+        async function verificarAcesso() {
+            const token = localStorage.getItem("access_token");
+
+            if (!token) {
+                navigate("/login", { replace: true });
+                return;
+            }
+
+            try {
+                const resposta = await fetch("http://127.0.0.1:5000/admin", {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+
+                if (resposta.status === 401 || resposta.status == 422) {
+                    localStorage.removeItem("access_token");
+                    navigate("/login", { replace: true });
+                    return;
+                }
+
+                if (resposta.status === 403 || resposta.status === 404) {
+                    setAcesso("negado");
+                    return;
+                }
+
+                if (!resposta.ok) {
+                    throw new Error("Não foi possível verificar o acesso.");
+                }
+
+                setAcesso("permitido");
+                carregarUsuarios();
+            } catch {
+                setAcesso("erro");
+            }
+        }
+
+        verificarAcesso()
+    }, [navigate]);
 
     const termo = busca.trim().toLowerCase();
     const usuariosFiltrados = usuarios.filter((usuario) =>
@@ -55,6 +93,49 @@ export default function PainelAdmin() {
         atualizarUsuarios();
         setMostrarFormulario(false);
         setMensagem("Usuário cadastrado com sucesso!");
+    }
+
+    if (acesso === "verificando") {
+        return (
+            <main className="admin-pagina admin-vazio">
+                <p role="status">Verificando acesso...</p>
+            </main>
+        );
+    }
+
+    if (acesso === "negado") {
+        return (
+            <main className="admin-pagina admin-vazio">
+                <h1>Acesso negado</h1>
+                <p>Este painel é exclusivo para administradores.</p>
+
+                <button
+                    className="admin-botao admin-botao-primario"
+                    type="button"
+                    onClick={() => navigate("/login")}
+                >
+                    Ir para o login
+                </button>
+            </main>
+        );
+    }
+
+    if (acesso === "erro") {
+        return (
+            <main className="admin-pagina admin-vazio">
+                <p role="alert">
+                    Não foi possível verificar o acesso. Confira se a API está rodando.
+                </p>
+
+                <button
+                    className="admin-botao admin-botao-primario"
+                    type="button"
+                    onClick={() => window.location.reload()}
+                >
+                    Tentar novamente
+                </button>
+            </main>
+        );
     }
 
     return (
