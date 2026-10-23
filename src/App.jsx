@@ -1,12 +1,16 @@
 import { Routes,Route } from "react-router";
 import Login from "./pages/Login";
 import TelaPrincipal from "./pages/Tela_Principal";
+import PainelAdmin from "./pages/Admin";
+import Dashboard from "./pages/Dashboard";
 
 function App() {
   return (
     <Routes>
       <Route path="/" element={<TelaPrincipal />} />
       <Route path="/login" element={<Login />} />
+      <Route path="/admin" element={<PainelAdmin />} />
+      <Route path="/inicio" element={<Dashboard />} />
     </Routes>
   );
 }
