@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router";
 import "./index.css"
 
 
@@ -131,7 +131,7 @@ export default function Login() {
                         </button>
                     </form>
 
-                    <p className="signup-prompt">Ainda não faz parte? <a href="#cadastro">Crie sua conta</a></p>
+                    <p className="signup-prompt">Ainda não faz parte? <Link to="/cadastro">Crie sua conta</Link></p>
                 </section>
             </section>
 
