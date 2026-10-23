@@ -102,3 +102,19 @@
     .admin-lista-rodape { justify-content: center; }
     .admin-paginacao { width: 100%; justify-content: space-between; gap: 8px; }
 }
+
+.admin-assinatura-acoes { display: flex; align-items: center; gap: 16px; }
+.admin-assinatura-acoes button { padding: 8px 14px; }
+.admin-usuario-link {
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--admin-verde);
+    font-size: 13px;
+    font-weight: 600;
+    text-align: left;
+}
+.admin-usuario-link:hover { text-decoration: underline; }
+.exclusao-descricao { margin: 24px 0 !important; line-height: 1.6; }
+.admin-botao-perigo { background: #a83e32; color: #fff; }
+.admin-botao-perigo:hover:not(:disabled) { background: #8c3026; }

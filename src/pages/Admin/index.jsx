@@ -1,6 +1,9 @@
 import { useState, useEffect } from "react";
 import FormularioUsuario from "../../components/FormularioUsuario";
 import { useNavigate } from "react-router";
+import FormularioAssinatura from "../../components/FormularioAssinatura";
+import DetalhesUsuario from "../../components/DetalhesUsuario";
+import ConfirmarExclusao from "../../components/ConfirmarExclusao";
 import "./index.css";
 
 export default function PainelAdmin() {
@@ -13,10 +16,15 @@ export default function PainelAdmin() {
     const [mensagem, setMensagem] = useState("");
     const navigate = useNavigate();
     const [acesso, setAcesso] = useState("verificando");
+    const [usuarioAssinatura, setUsuarioAssinatura] = useState(null);
+    const [usuarioExcluindo, setUsuarioExcluindo] = useState(null);
+    const [usuarioDetalhes, setUsuarioDetalhes] = useState(null);
+    const [usuarioParaExcluir, setUsuarioParaExcluir] = useState(null);
+    const [erroExclusao, setErroExclusao] = useState(null);
 
     async function carregarUsuarios() {
         try {
-            const resposta = await fetch("/api/usuarios");
+            const resposta = await fetch("/api/admin/usuarios", { headers: { Authorization: `Bearer ${localStorage.getItem("access_token")}` } });
             if (!resposta.ok) {
                 throw new Error("Não foi possível carregar os usuários.");
             }
@@ -108,6 +116,51 @@ export default function PainelAdmin() {
         );
     }
 
+    async function handleExcluirUsuario(usuario) {
+        setUsuarioExcluindo(usuario.username);
+        setErro("");
+        setMensagem("");
+        setErroExclusao("");
+
+        try {
+            const token = localStorage.getItem("access_token");
+
+            const resposta = await fetch(`/api/usuarios/${encodeURIComponent(usuario.username)}`, {
+                method: "DELETE",
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                },
+            });
+
+            if (resposta.status === 401 || resposta.status === 422) {
+                localStorage.removeItem("access_token");
+                navigate("/login", { replace: true });
+                return;
+            }
+
+            if (!resposta.ok) {
+                const dados = await resposta.json();
+
+                throw new Error(dados.erro || "Não foi possível excluir o usuário.");
+            }
+
+            setMensagem(`Usuário @${usuario.username} excluído.`);
+
+            if (usuarioAssinatura?.username === usuario.username) {
+                setUsuarioAssinatura(null);
+            }
+
+            setUsuarioParaExcluir(null);
+            atualizarUsuarios();
+        } catch (error) {
+            setErroExclusao(error.message || "Não foi possível excluir o usuário.");
+        } finally {
+            setUsuarioExcluindo(null);
+        }
+
+        console.log("Exclusão confirmada para:", usuario.username);
+    }
+
     if (acesso === "negado") {
         return (
             <main className="admin-pagina admin-vazio">
@@ -145,6 +198,25 @@ export default function PainelAdmin() {
 
     return (
         <div className="admin-pagina">
+            {usuarioDetalhes && (
+                <DetalhesUsuario
+                    key={usuarioDetalhes.username}
+                    usuario={usuarioDetalhes}
+                    onFechar={() => setUsuarioDetalhes(null)}
+                />
+            )}
+            {usuarioParaExcluir && (
+                <ConfirmarExclusao
+                    usuario={usuarioParaExcluir}
+                    excluindo={usuarioExcluindo !== null}
+                    erro={erroExclusao}
+                    onCancelar={() => {
+                        setUsuarioParaExcluir(null);
+                        setErroExclusao("");
+                    }}
+                    onConfirmar={() => handleExcluirUsuario(usuarioParaExcluir)}
+                />
+            )}
             <header className="admin-topo">
                 <div className="admin-topo-conteudo">
                     <a className="admin-marca" href="/admin" aria-label="Nexo — painel administrativo">
@@ -177,6 +249,13 @@ export default function PainelAdmin() {
 
                 {mensagem && <p className="admin-aviso" role="status">{mensagem}</p>}
                 {mostrarFormulario && <FormularioUsuario onUsuarioCadastrado={handleUsuarioCadastrado} onCancelar={() => setMostrarFormulario(false)} />}
+                {usuarioAssinatura && (
+                        <FormularioAssinatura
+                            key={usuarioAssinatura.username}
+                            usuario={usuarioAssinatura}
+                            onCancelar={() => setUsuarioAssinatura(null)}
+                        />
+                    )}
 
                 <section className="admin-usuarios" aria-labelledby="titulo-usuarios">
                     <div className="admin-lista-cabecalho">
@@ -196,13 +275,42 @@ export default function PainelAdmin() {
                     : <div className="admin-tabela-container">
                         <table className="admin-tabela">
                             <caption className="admin-sr-only">Usuários cadastrados</caption>
-                            <thead><tr><th scope="col">Usuário</th><th scope="col">E-mail</th><th scope="col">Tipo</th><th scope="col">Assinatura</th></tr></thead>
+                            <thead>
+                                <tr>
+                                    <th scope="col">Usuário</th>
+                                    <th scope="col">E-mail</th>
+                                    <th scope="col">Tipo</th>
+                                    <th scope="col">Assinatura</th>
+                                    <th scope="col">Ações</th>
+                                </tr>
+                            </thead>
                             <tbody>{usuariosDaPagina.map((usuario) => (
                                 <tr key={usuario.username}>
-                                    <td><div className="admin-usuario"><span className="admin-avatar" aria-hidden="true">{(usuario.nome || usuario.username || "?").trim().slice(0, 2).toUpperCase()}</span><div><strong>{usuario.nome || "Sem nome"}</strong><span>@{usuario.username}</span></div></div></td>
+                                    <td><div className="admin-usuario"><span className="admin-avatar" aria-hidden="true">{(usuario.nome || usuario.username || "?").trim().slice(0, 2).toUpperCase()}</span><div><button className="admin-usuario-link" type="button" onClick={() => setUsuarioDetalhes(usuario)}>{usuario.nome || "Sem nome"}</button><span>@{usuario.username}</span></div></div></td>
                                     <td>{usuario.email || "—"}</td>
-                                    <td><span className="admin-tipo">{usuario.tipo || "Não informado"}</span></td>
-                                    <td><span className={`admin-assinatura ${usuario.assinatura === true ? "admin-assinatura-ativa" : ""}`}><span aria-hidden="true">●</span>{usuario.assinatura === true ? "Ativa" : "Sem assinatura"}</span></td>
+                                    <td><span className="admin-tipo">{usuario.tipo_perfil || "Não informado"}</span></td>
+                                    <td>
+                                        <div className="admin-assinatura-acoes">
+                                            <span className={`admin-assinatura ${usuario.assinatura === true ? "admin-assinatura-ativa" : ""}`}><span aria-hidden="true">●</span>{usuario.assinatura === true ? "Ativa" : "Sem assinatura"}</span>
+                                            <button
+                                                className="admin-botao admin-botao-secundario"
+                                                type="button"
+                                                onClick={() => setUsuarioAssinatura(usuario)}
+                                            >Alterar</button>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <button
+                                            className="admin-botao admin-botao-secundario"
+                                            type="button"
+                                            disabled={usuarioExcluindo !== null}
+                                            onClick={() => setUsuarioParaExcluir(usuario)}
+                                        >
+                                            {usuarioExcluindo === usuario.username
+                                                ? "Excluindo..."
+                                                : "Excluir"}
+                                        </button>
+                                    </td>
                                 </tr>
                             ))}</tbody>
                         </table>

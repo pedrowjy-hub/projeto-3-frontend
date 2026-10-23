@@ -1,7 +1,7 @@
 import { Routes,Route } from "react-router";
 import Login from "./pages/Login";
-import TelaPrincipal from "./pages/Tela_Principal";
 import PainelAdmin from "./pages/Admin";
+import TelaPrincipal from "./pages/Tela_Principal";
 import Dashboard from "./pages/Dashboard";
 
 function App() {
