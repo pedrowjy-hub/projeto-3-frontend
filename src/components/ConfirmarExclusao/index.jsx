@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import "../DetalhesUsuario/index.css";
 
 export default function ConfirmarExclusao({
@@ -9,6 +9,13 @@ export default function ConfirmarExclusao({
     onConfirmar
 }) {
     const dialogRef = useRef(null);
+    const [senha, setSenha] = useState("");
+
+    function handleConfirmar(event) {
+        event.preventDefault();
+        if (excluindo || !senha.trim()) return;
+        onConfirmar(senha);
+    }
 
     useEffect(() => {
         const dialog = dialogRef.current;
@@ -41,6 +48,15 @@ export default function ConfirmarExclusao({
                 {" "}Essa ação não pode ser desfeita.
             </p>
 
+            <form className="exclusao-form" onSubmit={handleConfirmar} aria-busy={excluindo}>
+                <div className="usuario-form-campo">
+                    <label htmlFor="exclusao-senha">Sua senha atual</label>
+                    <input id="exclusao-senha" name="senha" type="password" autoComplete="current-password"
+                        value={senha} onChange={(event) => setSenha(event.target.value)}
+                        aria-describedby="exclusao-senha-ajuda" disabled={excluindo} required />
+                    <small id="exclusao-senha-ajuda">Digite a senha da sua conta conectada para confirmar a exclusão.</small>
+                </div>
+
             {erro && (
                 <p className="admin-aviso admin-aviso-erro" role="alert">
                     {erro}
@@ -60,13 +76,13 @@ export default function ConfirmarExclusao({
 
                 <button
                     className="admin-botao admin-botao-perigo"
-                    type="button"
-                    onClick={onConfirmar}
-                    disabled={excluindo}
+                    type="submit"
+                    disabled={excluindo || !senha.trim()}
                 >
                     {excluindo ? "Excluindo..." : "Excluir usuário"}
                 </button>
             </div>
+            </form>
         </dialog>
     );
 

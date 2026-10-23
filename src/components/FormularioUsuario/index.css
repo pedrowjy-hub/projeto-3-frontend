@@ -4,7 +4,8 @@
 .usuario-form-cabecalho h2 { margin-top: 8px; }
 .usuario-form-cabecalho p { margin-top: 6px; color: #7a8176; font-size: 12px; }
 .usuario-form-selo { display: grid; place-items: center; width: 42px; height: 42px; flex-shrink: 0; border-radius: 50%; background: #f5dfd0; color: #a75e41; font-size: 25px; }
-.usuario-form-campos { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px 24px; padding-block: 24px; }
+.usuario-form-campos { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px 24px; padding: 24px 0; margin: 0; min-width: 0; border: 0; }
+.usuario-form-tipo-conta { margin-top: 24px; }
 .usuario-form-campo { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
 .usuario-form-campo label { color: #425644; font-size: 12px; font-weight: 600; }
 .usuario-form-campo input, .usuario-form-campo select { width: 100%; min-width: 0; max-width: 100%; border: 1px solid #dedfd3; border-radius: 10px; padding: 12px 14px; color: #203f35; background: #fffefa; font-family: inherit; font-size: 13px; line-height: 1.5; }

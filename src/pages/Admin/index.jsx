@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import FormularioUsuario from "../../components/FormularioUsuario";
 import { useNavigate } from "react-router";
 import FormularioAssinatura from "../../components/FormularioAssinatura";
@@ -10,7 +10,8 @@ export default function PainelAdmin() {
     const [usuarios, setUsuarios] = useState([]);
     const [busca, setBusca] = useState("");
     const [pagina, setPagina] = useState(1);
-    const [mostrarFormulario, setMostrarFormulario] = useState(false);
+    const [formularioAtivo, setFormularioAtivo] = useState(null);
+    const [salvandoCadastro, setSalvandoCadastro] = useState(false);
     const [carregando, setCarregando] = useState(true);
     const [erro, setErro] = useState("");
     const [mensagem, setMensagem] = useState("");
@@ -22,20 +23,40 @@ export default function PainelAdmin() {
     const [usuarioParaExcluir, setUsuarioParaExcluir] = useState(null);
     const [erroExclusao, setErroExclusao] = useState(null);
 
-    async function carregarUsuarios() {
+    const carregarUsuarios = useCallback(async () => {
         try {
-            const resposta = await fetch("/api/admin/usuarios", { headers: { Authorization: `Bearer ${localStorage.getItem("access_token")}` } });
+            const token = localStorage.getItem("access_token");
+            if (!token) {
+                navigate("/login", { replace: true });
+                return;
+            }
+            const resposta = await fetch("/api/admin/usuarios", {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            if (resposta.status === 401 || resposta.status === 422) {
+                localStorage.removeItem("access_token");
+                navigate("/login", { replace: true });
+                return;
+            }
+            if (resposta.status === 403 || resposta.status === 404) {
+                setAcesso("negado");
+                return;
+            }
             if (!resposta.ok) {
                 throw new Error("Não foi possível carregar os usuários.");
             }
             const dados = await resposta.json();
-            setUsuarios(dados);
+            const payloadBase64 = token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/");
+            const payload = JSON.parse(new TextDecoder().decode(
+                Uint8Array.from(atob(payloadBase64), (caractere) => caractere.charCodeAt(0))
+            ));
+            setUsuarios(dados.filter((usuario) => usuario.username !== payload.sub));
         } catch {
             setErro("Não foi possível carregar os usuários. Confira se a API está rodando e tente novamente.");
         } finally {
             setCarregando(false);
         }
-    }
+    }, [navigate]);
 
     useEffect(() => {
         async function verificarAcesso() {
@@ -76,7 +97,7 @@ export default function PainelAdmin() {
         }
 
         verificarAcesso()
-    }, [navigate]);
+    }, [navigate, carregarUsuarios]);
 
     const termo = busca.trim().toLowerCase();
     const usuariosFiltrados = usuarios.filter((usuario) =>
@@ -97,10 +118,10 @@ export default function PainelAdmin() {
         carregarUsuarios();
     }
 
-    function handleUsuarioCadastrado() {
+    function handleUsuarioCadastrado(administrador) {
         atualizarUsuarios();
-        setMostrarFormulario(false);
-        setMensagem("Usuário cadastrado com sucesso!");
+        setFormularioAtivo(null);
+        setMensagem(administrador ? "Administrador cadastrado com sucesso!" : "Usuário cadastrado com sucesso!");
     }
 
     function handleSair() {
@@ -116,7 +137,8 @@ export default function PainelAdmin() {
         );
     }
 
-    async function handleExcluirUsuario(usuario) {
+    async function handleExcluirUsuario(usuario, senha) {
+        if (usuarioExcluindo !== null) return;
         setUsuarioExcluindo(usuario.username);
         setErro("");
         setMensagem("");
@@ -129,7 +151,9 @@ export default function PainelAdmin() {
                 method: "DELETE",
                 headers: {
                     "Authorization": `Bearer ${token}`,
+                    "Content-Type": "application/json",
                 },
+                body: JSON.stringify({ senha }),
             });
 
             if (resposta.status === 401 || resposta.status === 422) {
@@ -139,7 +163,7 @@ export default function PainelAdmin() {
             }
 
             if (!resposta.ok) {
-                const dados = await resposta.json();
+                const dados = await resposta.json().catch(() => ({}));
 
                 throw new Error(dados.erro || "Não foi possível excluir o usuário.");
             }
@@ -158,7 +182,6 @@ export default function PainelAdmin() {
             setUsuarioExcluindo(null);
         }
 
-        console.log("Exclusão confirmada para:", usuario.username);
     }
 
     if (acesso === "negado") {
@@ -214,7 +237,7 @@ export default function PainelAdmin() {
                         setUsuarioParaExcluir(null);
                         setErroExclusao("");
                     }}
-                    onConfirmar={() => handleExcluirUsuario(usuarioParaExcluir)}
+                    onConfirmar={(senha) => handleExcluirUsuario(usuarioParaExcluir, senha)}
                 />
             )}
             <header className="admin-topo">
@@ -238,17 +261,20 @@ export default function PainelAdmin() {
                         <div>
                             <h1>Painel administrativo</h1>
                         </div>
-                        <button className="admin-botao admin-botao-primario" type="button"
-                            aria-expanded={mostrarFormulario} aria-controls="cadastro-usuario"
-                            onClick={() => setMostrarFormulario(!mostrarFormulario)}>
-                            <span aria-hidden="true">{mostrarFormulario ? "−" : "+"}</span>
-                            {mostrarFormulario ? "Fechar formulário" : "Adicionar usuário"}
-                        </button>
+                        <div className="admin-cadastro-acoes">
+                            <button className="admin-botao admin-botao-primario" type="button"
+                                disabled={salvandoCadastro}
+                                aria-expanded={formularioAtivo === "usuario"} aria-controls="cadastro-usuario"
+                                onClick={() => { setMensagem(""); setFormularioAtivo(formularioAtivo === "usuario" ? null : "usuario"); }}>
+                                <span aria-hidden="true">{formularioAtivo === "usuario" ? "−" : "+"}</span>
+                                {formularioAtivo === "usuario" ? "Fechar formulário" : "Adicionar usuário"}
+                            </button>
+                        </div>
                     </div>
                 </div>
 
                 {mensagem && <p className="admin-aviso" role="status">{mensagem}</p>}
-                {mostrarFormulario && <FormularioUsuario onUsuarioCadastrado={handleUsuarioCadastrado} onCancelar={() => setMostrarFormulario(false)} />}
+                {formularioAtivo === "usuario" && <FormularioUsuario onUsuarioCadastrado={handleUsuarioCadastrado} onCancelar={() => setFormularioAtivo(null)} onSalvandoChange={setSalvandoCadastro} />}
                 {usuarioAssinatura && (
                         <FormularioAssinatura
                             key={usuarioAssinatura.username}
@@ -288,7 +314,7 @@ export default function PainelAdmin() {
                                 <tr key={usuario.username}>
                                     <td><div className="admin-usuario"><span className="admin-avatar" aria-hidden="true">{(usuario.nome || usuario.username || "?").trim().slice(0, 2).toUpperCase()}</span><div><button className="admin-usuario-link" type="button" onClick={() => setUsuarioDetalhes(usuario)}>{usuario.nome || "Sem nome"}</button><span>@{usuario.username}</span></div></div></td>
                                     <td>{usuario.email || "—"}</td>
-                                    <td><span className="admin-tipo">{usuario.tipo_perfil || "Não informado"}</span></td>
+                                    <td><span className="admin-tipo">{usuario.papel === "admin" ? "Administrador" : usuario.tipo_perfil || "Não informado"}</span></td>
                                     <td>
                                         <div className="admin-assinatura-acoes">
                                             <span className={`admin-assinatura ${usuario.assinatura === true ? "admin-assinatura-ativa" : ""}`}><span aria-hidden="true">●</span>{usuario.assinatura === true ? "Ativa" : "Sem assinatura"}</span>
