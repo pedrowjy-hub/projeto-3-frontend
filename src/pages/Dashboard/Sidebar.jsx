@@ -1,8 +1,8 @@
 import { NavLink } from "react-router";
 
-const tabs = ["Início", "Configurações", "Explorar", "Mensagens", "Avaliações", "Assinatura", "Perfil", "Denúncias"];
+const tabs = ["Início", "Configurações", "Explorar", "Postagens", "Mensagens", "Avaliações", "Assinatura", "Perfil", "Denúncias"];
 
-const routes = { "Início": "/inicio", "Configurações": "/configuracoes", "Explorar": "/explorar" };
+const routes = { "Início": "/inicio", "Configurações": "/configuracoes", "Explorar": "/explorar", "Postagens": "/postagens" };
 
 export default function Sidebar({ profile }) {
   return <aside className="dash-sidebar">
