@@ -4,6 +4,7 @@ import PainelAdmin from "./pages/Admin";
 import TelaPrincipal from "./pages/Tela_Principal";
 import Cadastro from "./pages/Cadastro";
 import Dashboard from "./pages/Dashboard";
+import Explorar from "./pages/Explorar";
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
       <Route path="/cadastro" element={<Cadastro />} />
       <Route path="/admin" element={<PainelAdmin />} />
       <Route path="/inicio" element={<Dashboard />} />
+      <Route path="/explorar" element={<Explorar />} />
     </Routes>
   );
 }
