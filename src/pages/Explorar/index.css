@@ -12,7 +12,7 @@
 .explore-results-header label { min-width:145px; }
 .explore-page .dash-card { display:flex; flex-direction:column; overflow-wrap:anywhere; }
 .explore-page .dash-card-body { flex:1; display:flex; flex-direction:column; }
-.explore-page .dash-bio { display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
+.explore-page .dash-bio { display:-webkit-box; -webkit-line-clamp:3; line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
 .explore-page .dash-platforms { margin-top:auto; margin-bottom:20px; }
 .explore-card-button { display:flex; justify-content:space-between; align-items:center; padding:10px 0 0; border:0; border-top:1px solid var(--dash-line); background:transparent; color:var(--dash-ink); font-size:12px!important; font-weight:600!important; }
 .explore-primary { padding:11px 16px; border:0; border-radius:5px; background:#123d35; color:#fffef8; font-size:12px!important; }
