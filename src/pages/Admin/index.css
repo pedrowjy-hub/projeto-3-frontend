@@ -9,7 +9,10 @@
     color: var(--admin-verde);
     font-size: 14px;
     line-height: 1.5;
+    color-scheme: light;
+    box-sizing: border-box;
 }
+.admin-pagina h1, .admin-pagina h2 { color: var(--admin-verde); }
 .admin-pagina h1, .admin-pagina h2, .admin-pagina h3, .admin-pagina p { margin: 0; }
 .admin-pagina button, .admin-pagina input { transition: background .18s, border-color .18s, box-shadow .18s; }
 .admin-pagina :focus-visible { outline: 3px solid #567845; outline-offset: 4px; }
@@ -26,6 +29,8 @@
 .admin-legenda { display: inline-flex; align-items: center; gap: 8px; color: #657156; font-size: 10px; font-weight: 750; letter-spacing: 1.8px; }
 .admin-ponto { width: 8px; height: 8px; background: #a4b747; border-radius: 50%; box-shadow: 0 0 0 4px #eaf0d3; margin: 0 5px; }
 .admin-titulo-linha { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; margin-top: 18px; }
+.admin-cadastro-acoes { display: flex; justify-content: flex-end; flex-wrap: wrap; gap: 12px; }
+.admin-cadastro-acoes button:disabled { cursor: wait; opacity: .6; }
 .admin-pagina h1 { font-size: clamp(32px, 4vw, 49px); font-weight: 650; letter-spacing: -2px; line-height: 1.1; }
 .admin-pagina h1 em { color: #b66547; font-family: Georgia, serif; font-weight: 400; }
 .admin-titulo-linha p { margin-top: 18px; color: #6b756e; font-size: 14px; }
@@ -65,6 +70,8 @@
 .admin-lista-rodape { display: flex; justify-content: space-between; gap: 16px; border-top: 1px solid #e9e9e0; padding: 16px 28px; color: #7b8575; font-size: 11px; }
 .admin-lista-rodape > span { font-family: Georgia, serif; font-style: italic; }
 .admin-vazio { min-height: 230px; padding: 44px 24px; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 12px; text-align: center; color: #6b7568; }
+.admin-pagina.admin-vazio { min-height: 100svh; justify-content: flex-start; padding-top: 44px; }
+.admin-pagina.admin-vazio h1 { color: #6b7568; }
 .admin-vazio > span { font-size: 38px; color: #9dad6b; }
 .admin-vazio h3 { font-size: 18px; color: var(--admin-verde); font-weight: 550; }
 .admin-rodape { display: flex; align-items: center; gap: 14px; padding-top: 30px; color: #8b9080; font-size: 11px; }
@@ -99,7 +106,7 @@
 }
 
 .admin-assinatura-acoes { display: flex; align-items: center; gap: 16px; }
-.admin-assinatura-acoes button { padding: 8px 14px; }
+.admin-tabela .admin-botao { padding: 8px 14px; }
 .admin-usuario-link {
     padding: 0;
     border: 0;
@@ -111,5 +118,6 @@
 }
 .admin-usuario-link:hover { text-decoration: underline; }
 .exclusao-descricao { margin: 24px 0 !important; line-height: 1.6; }
+.exclusao-form { display: grid; gap: 20px; }
 .admin-botao-perigo { background: #a83e32; color: #fff; }
 .admin-botao-perigo:hover:not(:disabled) { background: #8c3026; }
