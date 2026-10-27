@@ -6,6 +6,7 @@ import Cadastro from "./pages/Cadastro";
 import Dashboard from "./pages/Dashboard";
 import Configuracoes from "./pages/Configuracoes";
 import Explorar from "./pages/Explorar";
+import Postagens from "./pages/Postagens";
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
       <Route path="/inicio" element={<Dashboard />} />
       <Route path="/configuracoes" element={<Configuracoes />} />
       <Route path="/explorar" element={<Explorar />} />
+      <Route path="/postagens" element={<Postagens />} />
     </Routes>
   );
 }
