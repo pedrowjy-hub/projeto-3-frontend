@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { getSession } from "../../services/session";
 import "./index.css"
 
@@ -95,7 +95,7 @@ export default function Login() {
 
                     <button className="login-submit" type="submit" disabled={enviando}>{enviando ? "Entrando..." : "Entrar"} <span>⟶</span></button>
                 </form>
-                <p className="login-signup">Ainda não faz parte? <a href="#cadastro">Crie sua conta</a></p>
+                <p className="login-signup">Ainda não faz parte? <Link to="/cadastro">Crie sua conta</Link></p>
             </section>
             </div>
             <footer className="login-footer">© 2025 nexo · Feito para boas conexões.</footer>

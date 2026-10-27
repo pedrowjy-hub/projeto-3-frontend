@@ -1,0 +1,32 @@
+.cadastro-layout { display: grid; grid-template-columns: minmax(0, .85fr) minmax(0, 1.25fr); align-items: center; gap: clamp(32px, 6vw, 96px); max-width: 1180px; margin: 60px auto; }
+.cadastro-intro h1 { font-size: clamp(56px, 6vw, 82px); letter-spacing: -4px; line-height: .98; }
+.cadastro-card { min-width: 0; padding: clamp(24px, 3vw, 40px); }
+.cadastro-card .card-description { line-height: 1.6; margin-bottom: 25px; }
+.cadastro-campos { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px 16px; min-width: 0; padding: 0; margin: 0; border: 0; }
+.cadastro-campo { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.cadastro-campo-inteiro { grid-column: 1 / -1; }
+.cadastro-campo small { color: var(--muted); font-size: 10px; line-height: 1.5; }
+.cadastro-card select {
+  appearance: none;
+  width: 100%;
+  min-height: 47px;
+  padding: 12px 42px 12px 13px;
+  border: 1px solid #cbd5ce;
+  border-radius: 5px;
+  color: var(--ink);
+  background-color: var(--paper);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23123d35' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  background-size: 16px;
+  font-size: 13px;
+}
+.cadastro-card select:focus-visible, .cadastro-page a:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+.cadastro-card button[type="submit"] { min-height: 48px; }
+.cadastro-card button:disabled:hover { transform: none; }
+.cadastro-footer { margin: 0 auto; }
+.cadastro-sucesso { padding-top: 26px; color: var(--muted); font-size: 14px; line-height: 1.7; }
+.cadastro-sucesso > span { display: grid; place-items: center; width: 56px; height: 56px; border-radius: 50%; background: var(--lime); color: var(--ink); font-size: 27px; }
+.cadastro-page .cadastro-entrar { display: block; margin-top: 24px; padding: 14px; border-radius: 5px; background: var(--ink); color: white; text-align: center; font-weight: 600; }
+@media (max-width: 960px) { .cadastro-layout { grid-template-columns: 1fr; max-width: 620px; margin: 42px auto; gap: 32px; } .cadastro-intro h1 { font-size: 58px; } .cadastro-intro h1 br { display: none; } .cadastro-intro > p:not(.login-eyebrow) { margin: 20px 0 0; } .cadastro-intro .login-note { display: none; } .cadastro-card { width: 100%; } }
+@media (max-width: 520px) { .cadastro-campos { grid-template-columns: 1fr; gap: 18px; } .cadastro-intro h1 { font-size: 48px; letter-spacing: -3px; } .cadastro-page .login-eyebrow { font-size: 10px; } .cadastro-page .login-nav { gap: 16px; } }
