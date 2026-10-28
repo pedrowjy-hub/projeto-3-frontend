@@ -6,6 +6,48 @@ import Sidebar from "../Dashboard/Sidebar";
 import "../Dashboard/index.css";
 import "./index.css";
 
+function PlanDetails({ onClose }) {
+  const dialog = useRef(null);
+  useEffect(() => {
+    const element = dialog.current;
+    element.showModal();
+    return () => element.close();
+  }, []);
+
+  return <dialog ref={dialog} id="premium-details" className="plans-dialog plans-details-dialog" aria-labelledby="premium-details-title" aria-describedby="premium-details-intro" onCancel={onClose}>
+    <header className="plans-details-header">
+      <div><p className="dash-label">CONHEÇA CADA BENEFÍCIO</p><h2 id="premium-details-title">Mais sobre o Premium</h2></div>
+      <button className="plans-details-close" type="button" aria-label="Fechar informações do Premium" onClick={onClose} autoFocus>×</button>
+    </header>
+    <p id="premium-details-intro">Um plano para empresas e influenciadores que querem construir novas parcerias.</p>
+    <div className="plans-details-sections">
+      <section aria-labelledby="premium-details-connections">
+        <h3 id="premium-details-connections">Chat e contratos</h3>
+        <p>O chat e o fechamento de contratos são exclusivos para usuários com Premium ativo. Cada empresa ou influenciador precisa da própria assinatura para usar esses recursos.</p>
+        <p>O chat permitirá conversar diretamente com possíveis parceiros e trocar mensagens e arquivos. O fluxo de contratos permitirá formalizar os acordos entre empresas e influenciadores.</p>
+        <span className="plans-coming-soon">Interface de chat e contratos em construção</span>
+      </section>
+      <section aria-labelledby="premium-details-creators">
+        <h3 id="premium-details-creators">Mais visibilidade para influenciadores</h3>
+        <p>Perfis de influenciadores Premium terão maior destaque nos resultados de busca e nos filtros por área. A proposta é facilitar que empresas e outros influenciadores encontrem seu perfil e conheçam seu trabalho.</p>
+        <span className="plans-coming-soon">Em construção</span>
+      </section>
+      <section aria-labelledby="premium-details-companies">
+        <h3 id="premium-details-companies">Mais informações para empresas</h3>
+        <p>Empresas Premium poderão consultar análises de influenciadores para conhecer melhor os perfis antes de propor uma parceria.</p>
+        <p>Também poderão ler comentários de outras empresas que já fecharam acordos com o influenciador, reunindo informações sobre experiências anteriores para ajudar na escolha.</p>
+        <span className="plans-coming-soon">Análises e consulta de comentários em construção</span>
+      </section>
+      <section aria-labelledby="premium-details-billing">
+        <h3 id="premium-details-billing">Valor, renovação e cancelamento</h3>
+        <p>O valor do plano é <strong>R$ 29,90 por mês</strong>, com renovação automática mensal prevista. Com a integração de pagamentos, você poderá cancelar as próximas renovações e manter o acesso até o fim do período pago.</p>
+        <p className="plans-details-demo"><strong>Na demonstração atual:</strong> a ativação libera 30 dias de acesso, sem cobranças nem renovação efetiva. O cancelamento encerra o Premium imediatamente. Você pode consultar o status e a validade na aba Planos.</p>
+      </section>
+    </div>
+    <div className="plans-dialog-actions"><button className="plans-button" type="button" onClick={onClose}>Entendi</button></div>
+  </dialog>;
+}
+
 function ConfirmPlan({ cancel, saving, error, onClose, onConfirm }) {
   const dialog = useRef(null);
   useEffect(() => {
@@ -29,6 +71,7 @@ export default function Planos() {
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
   const [confirm, setConfirm] = useState(null);
+  const [showDetails, setShowDetails] = useState(false);
   const [saving, setSaving] = useState(false);
   const [attempt, setAttempt] = useState(0);
   const [now, setNow] = useState(() => Date.now());
@@ -98,15 +141,30 @@ export default function Planos() {
       <div className="plans-feedback" role="status">{message}</div>
       <section className="plans-grid" aria-label="Planos disponíveis">
         <article className="plans-card"><p className="dash-label">PARA COMEÇAR</p><h2>Gratuito</h2><p className="plans-description">O primeiro passo para encontrar boas parcerias.</p><p className="plans-price">R$ 0 <span>/ sem prazo</span></p><ul><li>Perfil na comunidade</li><li>Exploração de empresas e influenciadores</li><li>Acesso às postagens da plataforma</li><li>Chat e fechamento de contratos disponíveis somente no Premium</li></ul>{premium ? <button className="plans-button plans-button-light" onClick={() => openConfirmation("cancel")}>Mudar para Gratuito <span aria-hidden="true">→</span></button> : <p className="plans-current-label">✓ Seu plano atual</p>}</article>
-        <article className="plans-card plans-card-premium"><div className="plans-card-top"><p className="dash-label">UM NOVO CICLO</p><span className="plans-badge">PREMIUM ✦</span></div><h2>Premium</h2><p className="plans-description">Chat e fechamento de contratos exclusivos para assinantes. Para influenciadores, maior visibilidade nas buscas e filtros por área. Para empresas, acesso a análises de influenciadores e comentários de empresas que já fecharam acordos com eles. Esses benefícios estão em construção. R$ 29,90/mês, com renovação automática e cancelamento a qualquer momento.</p><p className="plans-price">R$ 29,90 <span>/ mês</span></p><ul><li>Tudo do plano Gratuito</li><li>Chat exclusivo para assinantes Premium</li><li>Fechamento de contratos exclusivo para assinantes <span className="plans-coming-soon">Em construção</span></li><li>Renovação automática mensal</li><li>Consulta de status e validade</li><li>Cancelamento a qualquer momento</li></ul>
+        <article className="plans-card plans-card-premium">
+          <div className="plans-card-top"><p className="dash-label">UM NOVO CICLO</p><span className="plans-badge">PREMIUM ✦</span></div>
+          <h2>Premium</h2>
+          <p className="plans-description">Mais conexões para transformar seu próximo encontro em uma boa parceria.</p>
+          <p className="plans-price">R$ 29,90 <span>/ mês</span></p>
+          <p className="plans-billing">Renovação automática mensal.<br />Cancele quando quiser.</p>
+          <ul>
+            <li>Tudo do plano Gratuito</li>
+            <li>Chat exclusivo para assinantes <span className="plans-coming-soon">Interface em construção</span></li>
+            <li>Fechamento de contratos <span className="plans-coming-soon">Em construção</span></li>
+            <li>Consulta de status e validade</li>
+          </ul>
           <div className="plans-benefits" aria-label="Benefícios por tipo de perfil">
-            <section><h3>Para influenciadores <span className="plans-coming-soon">Em construção</span></h3><p>Maior visibilidade do seu perfil nas buscas e nos filtros por área, para ser encontrado por empresas e outros influenciadores.</p></section>
-            <section><h3>Para empresas <span className="plans-coming-soon">Em construção</span></h3><p>Acesso às análises de influenciadores e aos comentários de empresas que já fecharam acordos com eles, para ajudar na escolha de novas parcerias.</p></section>
-          </div>{premium ? <p className="plans-current-label">✓ Seu plano atual</p> : <button className="plans-button" onClick={() => openConfirmation("activate")}>Ativar Premium <span aria-hidden="true">↗</span></button>}</article>
+            <p className="plans-benefits-label">EM CONSTRUÇÃO PARA O SEU PERFIL</p>
+            <section><h3>Para influenciadores</h3><p>Mais visibilidade nas buscas e nos filtros por área.</p></section>
+            <section><h3>Para empresas</h3><p>Análises de influenciadores e comentários de empresas que já trabalharam com eles.</p></section>
+          </div>
+          <button className="plans-more-info" type="button" aria-haspopup="dialog" aria-controls="premium-details" onClick={() => setShowDetails(true)}>Mais informações sobre o plano <span aria-hidden="true">↗</span></button>
+          {premium ? <p className="plans-current-label">✓ Seu plano atual</p> : <button className="plans-button" onClick={() => openConfirmation("activate")}>Ativar Premium <span aria-hidden="true">↗</span></button>}</article>
       </section>
       <p className="plans-note">Modo demonstração: Premium por R$ 29,90/mês, com renovação automática prevista para a integração de pagamentos. Por enquanto, a ativação libera 30 dias de acesso, sem cobranças ou renovações efetivas.</p>
       <section className="plans-faq" aria-labelledby="plans-faq-title"><p className="dash-label">TUDO ÀS CLARAS</p><h2 id="plans-faq-title">Dúvidas sobre os planos</h2><details><summary>Preciso de Premium para conversar e fechar contratos?</summary><p>Sim. Empresas e influenciadores precisam de uma assinatura Premium ativa para utilizar o chat e fechar contratos. No plano Gratuito, você pode explorar perfis e acompanhar postagens. A interface de mensagens e o fluxo de contratos ainda estão em construção.</p></details><details><summary>Quais benefícios estão em construção?</summary><p>Para influenciadores, estamos preparando maior visibilidade nas buscas e nos filtros por área. Para empresas, estão previstos análises de influenciadores e acesso aos comentários de outras empresas que já fecharam acordos com eles. Esses benefícios ainda não estão disponíveis.</p></details><details><summary>Como funciona a ativação?</summary><p>O Premium tem valor de R$ 29,90 por mês e prevê renovação automática mensal até o cancelamento. Nesta demonstração, a ativação registra apenas 30 dias de acesso, sem solicitar pagamento ou executar renovações.</p></details><details><summary>Posso cancelar quando quiser?</summary><p>Sim. Com a integração de pagamentos, o cancelamento interromperá as próximas renovações e manterá o Premium até o fim do período pago. Nesta demonstração, o cancelamento encerra o acesso Premium imediatamente.</p></details><details><summary>Como funciona a renovação automática?</summary><p>Com a integração de pagamentos, uma nova cobrança de R$ 29,90 será feita a cada mês para manter o Premium ativo, até você cancelar. Na demonstração atual, não há cobrança ou renovação efetiva: ao fim dos 30 dias, o perfil volta ao plano Gratuito.</p></details></section>
     </div>
     {confirm && <ConfirmPlan cancel={confirm === "cancel"} saving={saving} error={error} onClose={() => { setConfirm(null); setError(""); }} onConfirm={changePlan} />}
+    {showDetails && <PlanDetails onClose={() => setShowDetails(false)} />}
   </main>;
 }
