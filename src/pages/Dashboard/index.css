@@ -4,7 +4,7 @@
 .dash-page a { color:inherit; text-decoration:none; }
 .dash-sidebar { width:14.375rem; flex-shrink:0; min-height:0; position:sticky; top:0; height:100dvh; display:flex; flex-direction:column; padding:2.375rem 1.25rem 1.5rem; background:#eeeee3; border-right:0.0625rem solid var(--dash-line); z-index:10; }
 .dash-sidebar-label { margin:0 0.875rem 2.5rem; font-size:0.625rem; letter-spacing:0.125rem; color:var(--dash-muted); }
-.dash-sidebar nav { display:flex; flex-direction:column; gap:0.5rem; }
+.dash-sidebar nav { display:flex; flex-direction:column; gap:0.5rem; min-height:0; overflow-y:auto; scrollbar-width:thin; }
 .dash-sidebar nav a,.dash-tab-placeholder { display:flex; align-items:center; justify-content:space-between; min-height:3rem; padding:0.875rem 1rem; border-radius:0.5rem; font-size:0.9375rem; line-height:1.4; }
 .dash-sidebar nav a { color:var(--dash-muted); }
 .dash-sidebar nav a[aria-current="page"] { background:#dce9a9; color:var(--dash-ink); font-weight:700; }

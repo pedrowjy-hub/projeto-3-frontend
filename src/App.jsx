@@ -7,6 +7,8 @@ import Dashboard from "./pages/Dashboard";
 import Configuracoes from "./pages/Configuracoes";
 import Explorar from "./pages/Explorar";
 import Postagens from "./pages/Postagens";
+import Planos from "./pages/Planos";
+import RecursosPremium from "./pages/RecursosPremium";
 
 function App() {
   return (
@@ -19,6 +21,10 @@ function App() {
       <Route path="/configuracoes" element={<Configuracoes />} />
       <Route path="/explorar" element={<Explorar />} />
       <Route path="/postagens" element={<Postagens />} />
+      <Route path="/planos" element={<Planos />} />
+      <Route path="/assinatura" element={<Planos />} />
+      <Route path="/mensagens" element={<RecursosPremium recurso="mensagens" />} />
+      <Route path="/contratos" element={<RecursosPremium recurso="contratos" />} />
     </Routes>
   );
 }
