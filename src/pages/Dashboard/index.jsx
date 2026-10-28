@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { getSession } from "../../services/session";
 import Sidebar from "./Sidebar";
+import AnuncioPlanos from "../../components/AnuncioPlanos";
 import "./index.css";
 
 export default function Dashboard() {
@@ -41,6 +42,7 @@ export default function Dashboard() {
   const filtered = creators.filter(c => [c.nome, c.username, c.nicho].some(value => String(value || "").toLowerCase().includes(search.toLowerCase())));
 
   return <main className="dash-page">
+    <AnuncioPlanos username={profile.username} />
     <Sidebar profile={profile} />
     <div className="dash-content">
       <header className="dash-header"><div><p className="dash-label">INÍCIO</p><h1>Olá, {profile.nome?.split(" ")[0] || profile.username}<span> ✦</span></h1></div><span className="dash-role">{company ? "Empresa" : "Influenciador"}</span></header>
