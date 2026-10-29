@@ -4,9 +4,11 @@ export async function getSession(token) {
   });
   if (response.ok) return { papel: "admin" };
   if (response.status !== 403) {
-    throw new Error(response.status === 401 || response.status === 422
+    const error = new Error(response.status === 401 || response.status === 422
       ? "Sua sessão expirou. Entre novamente."
       : "Não foi possível verificar sua sessão.");
+    error.status = response.status;
+    throw error;
   }
   // O token identifica o perfil; a autorização administrativa é feita pela API acima.
   const segment = token.split(".")[1];

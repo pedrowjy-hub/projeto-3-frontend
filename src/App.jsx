@@ -18,9 +18,8 @@ function App() {
       <Route path="/cadastro" element={<Cadastro />} />
       <Route path="/admin" element={<PainelAdmin />} />
       <Route path="/inicio" element={<Dashboard />} />
-      <Route path="/inicio/perfil" element={<Dashboard />} />
+      <Route path="/perfil" element={<Dashboard />} />
       <Route path="/dashboard" element={<Dashboard />} />
-      <Route path="/dashboard/perfil" element={<Dashboard />} />
       <Route path="/configuracoes" element={<Configuracoes />} />
       <Route path="/explorar" element={<Explorar />} />
       <Route path="/postagens" element={<Postagens />} />
