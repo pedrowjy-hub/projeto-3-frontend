@@ -4,7 +4,7 @@ const tabs = ["Início", "Configurações", "Explorar", "Postagens", "Mensagens"
 
 const routes = { "Início": "/inicio", "Configurações": "/configuracoes", "Explorar": "/explorar", "Postagens": "/postagens", "Mensagens": "/mensagens", "Contratos": "/contratos", "Planos": "/planos" };
 
-export default function Sidebar({ profile }) {
+export default function Sidebar({ profile, basePath = "/dashboard" }) {
   return <aside className="dash-sidebar">
     <p className="dash-sidebar-label">SEU ESPAÇO</p>
     <nav aria-label="Menu do dashboard">
