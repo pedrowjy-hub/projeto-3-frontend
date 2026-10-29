@@ -9,8 +9,7 @@ import "./index.css";
 export default function Dashboard() {
   const navigate = useNavigate();
   const { pathname } = useLocation();
-  const profilePage = pathname.endsWith("/perfil");
-  const basePath = pathname.startsWith("/inicio") ? "/inicio" : "/dashboard";
+  const profilePage = pathname === "/perfil";
   const [profile, setProfile] = useState(null);
   const [creators, setCreators] = useState([]);
   const [error, setError] = useState("");
@@ -20,6 +19,9 @@ export default function Dashboard() {
   useEffect(() => {
     let active = true;
     async function load() {
+      setProfile(null);
+      setError("");
+      setLoading(true);
       const token = localStorage.getItem("access_token");
       if (!token) { navigate("/login", { replace: true }); return; }
       try {
@@ -34,7 +36,13 @@ export default function Dashboard() {
           if (active) setCreators(data);
         }
       } catch (err) {
-        if (active) setError(err.message);
+        if (!active) return;
+        if (err.status === 401 || err.status === 422) {
+          localStorage.removeItem("access_token");
+          navigate("/login", { replace: true });
+          return;
+        }
+        setError(err.message);
       } finally { if (active) setLoading(false); }
     }
     load();
@@ -47,7 +55,7 @@ export default function Dashboard() {
 
   return <main className="dash-page">
     <AnuncioPlanos username={profile.username} />
-    <Sidebar profile={profile} basePath={basePath} />
+    <Sidebar profile={profile} />
     {profilePage ? (
       <Perfil
         key={profile.username}
