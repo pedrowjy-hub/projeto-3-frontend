@@ -115,7 +115,7 @@ export default function TelaPrincipal() {
 
       <section className="nexo-cta"><div className="cta-orbit" /><p className="section-label">VAMOS COMEÇAR?</p><h2>Boas parcerias não<br />acontecem <em>por acaso.</em></h2><p>Elas começam aqui. Entre para uma comunidade onde talento encontra oportunidade e confiança vira resultado.</p><div><a className="dark-button" href="/login">Quero encontrar creators <span>→</span></a><a className="light-button" href="/login">Quero encontrar trabalhos <span>→</span></a></div><small>Comece grátis &nbsp;·&nbsp; Cancele quando quiser &nbsp;·&nbsp; Suporte humano</small></section>
 
-      <footer className="nexo-footer"><div><a href="#inicio">Sobre</a><a href="#como-funciona">Segurança</a><a href="#oportunidades">Planos</a><a href="#inicio">Central de ajuda</a></div><p>© 2025. Feito para boas conexões.</p><span>Brasil · Português</span></footer>
+      <footer className="nexo-footer"><div><a href="#inicio">Sobre</a><a href="#como-funciona">Segurança</a><a href="/planos">Planos</a><a href="#inicio">Central de ajuda</a></div><p>© 2025. Feito para boas conexões.</p><span>Brasil · Português</span></footer>
     </main>
   );
 }

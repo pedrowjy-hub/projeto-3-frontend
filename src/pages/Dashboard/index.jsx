@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from "react-router";
 import { getSession } from "../../services/session";
 import Perfil from "./Perfil";
 import Sidebar from "./Sidebar";
+import AnuncioPlanos from "../../components/AnuncioPlanos";
 import "./index.css";
 
 export default function Dashboard() {
@@ -45,8 +46,15 @@ export default function Dashboard() {
   const filtered = creators.filter(c => [c.nome, c.username, c.nicho].some(value => String(value || "").toLowerCase().includes(search.toLowerCase())));
 
   return <main className="dash-page">
+    <AnuncioPlanos username={profile.username} />
     <Sidebar profile={profile} basePath={basePath} />
-    {profilePage ? <Perfil key={profile.username} profile={profile} onUpdate={setProfile} /> : <div className="dash-content">
+    {profilePage ? (
+      <Perfil
+        key={profile.username}
+        profile={profile}
+        onUpdate={setProfile}
+      />
+    ) : <div className="dash-content">
       <header className="dash-header"><div><p className="dash-label">INÍCIO</p><h1>Olá, {profile.nome?.split(" ")[0] || profile.username}<span> ✦</span></h1></div><span className="dash-role">{company ? "Empresa" : "Influenciador"}</span></header>
       <section className="dash-welcome">
         <div><p className="dash-label">BOAS PARCERIAS COMEÇAM AQUI</p><h2>{company ? <>Encontre quem dá vida<br />à sua <em>marca.</em></> : <>Sua próxima parceria<br />começa <em>aqui.</em></>}</h2><p>{company ? "Conecte sua marca a creators que compartilham dos seus objetivos." : "Descubra oportunidades publicadas por empresas e transforme boas ideias em parcerias."}</p><a href="#dash-results">{company ? "Encontrar influenciadores" : "Ver oportunidades"} <span>↓</span></a></div>
