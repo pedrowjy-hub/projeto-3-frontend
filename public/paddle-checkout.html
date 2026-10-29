@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex,nofollow" />
+  <meta name="referrer" content="no-referrer" />
+  <title>Checkout de testes · Projeto 3</title>
+  <style>
+    * { box-sizing:border-box; }
+    body { margin:0; min-height:100svh; display:grid; place-items:center; padding:1.5rem; background:#f5f3ea; color:#123d35; font:1rem/1.65 system-ui,sans-serif; }
+    main { width:min(100%,32rem); padding:clamp(1.5rem,5vw,3rem); border:1px solid #dce1d4; border-radius:1rem; background:#fffef8; }
+    .label { font-size:0.6875rem; font-weight:700; letter-spacing:0.1rem; color:#62766c; }
+    h1 { font-size:2rem; line-height:1.2; letter-spacing:-0.05rem; }
+    p { color:#62766c; }
+    button { padding:0.875rem 1.125rem; border:0; border-radius:0.375rem; background:#123d35; color:#fffef8; font:inherit; cursor:pointer; }
+    :focus-visible { outline:3px solid #9cb44e; outline-offset:3px; }
+  </style>
+</head>
+<body>
+  <main>
+    <span class="label">PROJETO 3 · PADDLE SANDBOX</span>
+    <h1>Checkout de testes</h1>
+    <p>Este ambiente utiliza somente cartões fictícios. Nenhum dinheiro real é movimentado.</p>
+    <p id="status" role="status">Para iniciar um teste, use o botão Ativar Premium na aplicação.</p>
+    <button id="retry" type="button" hidden>Reabrir checkout de teste</button>
+  </main>
+  <script>
+    const statusText = document.getElementById("status");
+    const retry = document.getElementById("retry");
+    const transactionId = new URLSearchParams(location.search).get("_ptxn");
+    if (transactionId && /^txn_[a-z0-9]{26}$/.test(transactionId)) {
+      statusText.textContent = "Carregando o checkout do sandbox…";
+      const script = document.createElement("script");
+      script.src = "https://cdn.paddle.com/paddle/v2/paddle.js";
+      script.onerror = () => { statusText.textContent = "Não foi possível carregar o checkout. Recarregue a página para tentar novamente."; };
+      script.onload = () => {
+        Paddle.Environment.set("sandbox");
+        Paddle.Initialize({
+          token: "test_1bb61cbc7e62c6e93bd4a6add1e",
+          checkout: { settings: { displayMode:"overlay", locale:"pt-BR", allowedPaymentMethods:["card"], showAddDiscounts:false } },
+          eventCallback: event => {
+            if (event.name === "checkout.completed") statusText.textContent = "Checkout de teste concluído. A confirmação automática do Premium na aplicação ainda está em construção.";
+            if (event.name === "checkout.closed") retry.hidden = false;
+            if (["checkout.error", "checkout.payment-error"].includes(event.name)) statusText.textContent = "Ocorreu um problema no checkout de teste. Feche o checkout e tente novamente.";
+          },
+        });
+        // Paddle.js abre automaticamente o checkout quando a URL contém _ptxn.
+        retry.onclick = () => Paddle.Checkout.open({ transactionId });
+        statusText.textContent = "Checkout de sandbox preparado. Use somente dados de teste.";
+      };
+      document.head.appendChild(script);
+    } else if (transactionId) {
+      statusText.textContent = "O identificador do checkout é inválido. Inicie novamente pela aplicação.";
+    }
+  </script>
+</body>
+</html>
