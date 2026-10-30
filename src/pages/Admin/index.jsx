@@ -9,6 +9,7 @@ import "./index.css";
 
 export default function PainelAdmin() {
     const [usuarios, setUsuarios] = useState([]);
+    const [statusConta, setStatusConta] = useState("ativos");
     const [busca, setBusca] = useState("");
     const [pagina, setPagina] = useState(1);
     const [formularioAtivo, setFormularioAtivo] = useState(null);
@@ -102,6 +103,7 @@ export default function PainelAdmin() {
 
     const termo = busca.trim().toLowerCase();
     const usuariosFiltrados = usuarios.filter((usuario) =>
+        (statusConta === "todos" || (statusConta === "ativos" ? usuario.ativo !== false : usuario.ativo === false)) &&
         [usuario.nome, usuario.username, usuario.email].some((valor) =>
             String(valor || "").toLowerCase().includes(termo)
         )
@@ -148,13 +150,13 @@ export default function PainelAdmin() {
         try {
             const token = localStorage.getItem("access_token");
 
-            const resposta = await fetch(`/api/usuarios/${encodeURIComponent(usuario.username)}`, {
-                method: "DELETE",
+            const resposta = await fetch(`/api/admin/usuarios/${encodeURIComponent(usuario.username)}/status`, {
+                method: "PATCH",
                 headers: {
                     "Authorization": `Bearer ${token}`,
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({ senha }),
+                body: JSON.stringify({ senha, ativo: usuario.ativo === false }),
             });
 
             if (resposta.status === 401 || resposta.status === 422) {
@@ -166,10 +168,10 @@ export default function PainelAdmin() {
             if (!resposta.ok) {
                 const dados = await resposta.json().catch(() => ({}));
 
-                throw new Error(dados.erro || "Não foi possível excluir o usuário.");
+                throw new Error(dados.erro || "Não foi possível alterar o status da conta.");
             }
 
-            setMensagem(`Usuário @${usuario.username} excluído.`);
+            setMensagem(`Conta @${usuario.username} ${usuario.ativo === false ? "reativada" : "desativada"}.`);
 
             if (usuarioAssinatura?.username === usuario.username) {
                 setUsuarioAssinatura(null);
@@ -178,7 +180,7 @@ export default function PainelAdmin() {
             setUsuarioParaExcluir(null);
             atualizarUsuarios();
         } catch (error) {
-            setErroExclusao(error.message || "Não foi possível excluir o usuário.");
+            setErroExclusao(error.message || "Não foi possível alterar o status da conta.");
         } finally {
             setUsuarioExcluindo(null);
         }
@@ -231,6 +233,7 @@ export default function PainelAdmin() {
             )}
             {usuarioParaExcluir && (
                 <ConfirmarExclusao
+                    reativar={usuarioParaExcluir.ativo === false}
                     usuario={usuarioParaExcluir}
                     excluindo={usuarioExcluindo !== null}
                     erro={erroExclusao}
@@ -289,6 +292,7 @@ export default function PainelAdmin() {
                         <div>
                             <div className="admin-lista-titulo"><h2 id="titulo-usuarios">Usuários</h2><span className="admin-contagem">{carregando ? "…" : erro ? "—" : usuarios.length}</span></div>
                         </div>
+                        <label className="admin-status-filtro">Status da conta<select value={statusConta} onChange={event => { setStatusConta(event.target.value); setPagina(1); }}><option value="ativos">Ativos</option><option value="desativados">Desativados</option><option value="todos">Todos</option></select></label>
                         <div className="admin-busca">
                             <label className="admin-sr-only" htmlFor="busca">Buscar usuário</label>
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" /><path d="m16 16 4 4" /></svg>
@@ -298,7 +302,7 @@ export default function PainelAdmin() {
 
                     {carregando ? <div className="admin-vazio" role="status">Carregando usuários...</div>
                     : erro ? <div className="admin-vazio"><p role="alert">{erro}</p><button className="admin-botao admin-botao-secundario" type="button" onClick={atualizarUsuarios}>Tentar novamente</button></div>
-                    : usuariosFiltrados.length === 0 ? <div className="admin-vazio"><span aria-hidden="true">◎</span><h3>{termo ? "Nenhum usuário encontrado" : "Nenhum usuário cadastrado"}</h3><p>{termo ? "Tente outro nome, username ou e-mail." : "Clique em “Adicionar usuário” para cadastrar."}</p></div>
+                    : usuariosFiltrados.length === 0 ? <div className="admin-vazio"><span aria-hidden="true">◎</span><h3>{termo ? "Nenhum usuário encontrado" : "Nenhum usuário neste filtro"}</h3><p>{termo ? "Tente outro nome, username ou e-mail." : "Selecione outro status ou adicione um usuário."}</p></div>
                     : <div className="admin-tabela-container">
                         <table className="admin-tabela">
                             <caption className="admin-sr-only">Usuários cadastrados</caption>
@@ -307,6 +311,7 @@ export default function PainelAdmin() {
                                     <th scope="col">Usuário</th>
                                     <th scope="col">E-mail</th>
                                     <th scope="col">Tipo</th>
+                                    <th scope="col">Status</th>
                                     <th scope="col">Assinatura</th>
                                     <th scope="col">Ações</th>
                                 </tr>
@@ -316,6 +321,7 @@ export default function PainelAdmin() {
                                     <td><div className="admin-usuario"><span className="admin-avatar" aria-hidden="true">{(usuario.nome || usuario.username || "?").trim().slice(0, 2).toUpperCase()}</span><div><button className="admin-usuario-link" type="button" onClick={() => setUsuarioDetalhes(usuario)}>{usuario.nome || "Sem nome"}</button><span>@{usuario.username}</span></div></div></td>
                                     <td>{usuario.email || "—"}</td>
                                     <td><span className="admin-tipo">{usuario.papel === "admin" ? "Administrador" : usuario.tipo_perfil || "Não informado"}</span></td>
+                                    <td><span className="admin-tipo">{usuario.ativo === false ? "Desativado" : "Ativo"}</span></td>
                                     <td>
                                         <div className="admin-assinatura-acoes">
                                             <span className={`admin-assinatura ${usuario.assinatura === true ? "admin-assinatura-ativa" : ""}`}><span aria-hidden="true">●</span>{usuario.assinatura === true ? "Ativa" : "Sem assinatura"}</span>
@@ -334,8 +340,8 @@ export default function PainelAdmin() {
                                             onClick={() => setUsuarioParaExcluir(usuario)}
                                         >
                                             {usuarioExcluindo === usuario.username
-                                                ? "Excluindo..."
-                                                : "Excluir"}
+                                                ? "Salvando..."
+                                                : usuario.ativo === false ? "Reativar" : "Desativar"}
                                         </button>
                                     </td>
                                 </tr>

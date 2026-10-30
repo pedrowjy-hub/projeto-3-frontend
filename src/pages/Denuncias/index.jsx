@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router";
 import { getSession } from "../../services/session";
+import { enviarDenuncia, statusDenuncia } from "../../services/denuncias";
+import useDenuncias from "../../services/useDenuncias";
 import Sidebar from "../Dashboard/Sidebar";
 import "../Dashboard/index.css";
 import "./index.css";
@@ -18,6 +20,11 @@ export default function Denuncias() {
   const [open, setOpen] = useState(false);
   const [review, setReview] = useState(false);
   const [form, setForm] = useState({ username: "", motivo: "", descricao: "" });
+  const history = useDenuncias(false, Boolean(profile));
+  const [sending, setSending] = useState(false);
+  const sendLock = useRef(false);
+  const [sendError, setSendError] = useState("");
+  const [success, setSuccess] = useState("");
   const firstField = useRef(null);
   const trigger = useRef(null);
   const reviewHeading = useRef(null);
@@ -57,6 +64,20 @@ export default function Denuncias() {
     else if (open && !loading) firstField.current?.focus();
   }, [open, review, loading]);
 
+  async function send() {
+    if (sendLock.current) return;
+    sendLock.current = true; setSending(true); setSendError(""); setSuccess("");
+    try {
+      const report = await enviarDenuncia(form);
+      setSuccess(`Denúncia enviada. Protocolo: ${report.id}`);
+      setForm({ username: "", motivo: "", descricao: "" });
+      close(); history.reload();
+    } catch (err) {
+      if (err.status === 401 || err.status === 422) navigate("/login", { replace: true });
+      setSendError(err.message);
+    } finally { sendLock.current = false; setSending(false); }
+  }
+
   function close() {
     setOpen(false); setReview(false);
     trigger.current?.focus();
@@ -73,11 +94,11 @@ export default function Denuncias() {
     <div className="dash-content">
       <header className="dash-header reports-header">
         <div><p className="dash-label">CUIDADO COM A COMUNIDADE</p><h1>Denúncias<span> ✦</span></h1><p>Um espaço para relatar problemas e cuidar das suas conexões.</p></div>
-        <button ref={trigger} className="reports-primary" aria-expanded={open} aria-controls="report-form" onClick={() => { setOpen(!open); setReview(false); setLoading(true); setError(""); }}> {open ? "Fechar formulário" : "+ Nova denúncia"}</button>
+        <button ref={trigger} disabled={sending} className="reports-primary" aria-expanded={open} aria-controls="report-form" onClick={() => { setOpen(!open); setReview(false); setLoading(true); setError(""); }}> {open ? "Fechar formulário" : "+ Nova denúncia"}</button>
       </header>
 
       <section className="reports-intro" aria-labelledby="reports-intro-title"><span className="reports-symbol" aria-hidden="true">◇</span><div><h2 id="reports-intro-title">Boas conexões começam com respeito.</h2><p>Encontrou um perfil suspeito ou passou por uma situação inadequada? Descreva o que aconteceu para que a administração possa avaliar.</p></div></section>
-      <p className="reports-notice" role="status"><strong>Envio ainda indisponível.</strong> Você pode preencher e revisar o formulário, mas as denúncias ainda não podem ser enviadas nem consultadas. O relato permanece apenas nesta página e será perdido ao sair ou atualizar.</p>
+      {success && <p className="reports-notice" role="status">{success}</p>}
 
       {open && <section className="reports-card" id="report-form" aria-labelledby="report-form-title">
         <div className="reports-card-heading"><div><p className="dash-label">CONTE O QUE ACONTECEU</p><h2 id="report-form-title">Nova denúncia</h2></div><span className="reports-tag">Não enviada</span></div>
@@ -94,12 +115,15 @@ export default function Denuncias() {
         </form> : <div>
           <h3 ref={reviewHeading} tabIndex={-1}>Revise seu relato</h3>
           <dl className="reports-details"><div><dt>Perfil denunciado</dt><dd>@{form.username}</dd></div><div><dt>Motivo</dt><dd>{form.motivo}</dd></div><div><dt>Descrição</dt><dd>{form.descricao.trim()}</dd></div></dl>
-          <p id="report-unavailable" className="reports-notice">Este relato não foi enviado. O envio ficará disponível quando o serviço de denúncias estiver conectado.</p>
-          <div className="reports-actions"><button type="button" onClick={() => setReview(false)}>Editar relato</button><button className="reports-primary" disabled aria-describedby="report-unavailable">Enviar denúncia</button></div>
+          {sendError && <p className="reports-error" role="alert">{sendError}</p>}
+          <div className="reports-actions"><button type="button" disabled={sending} onClick={() => { setReview(false); setSendError(""); }}>Editar relato</button><button type="button" className="reports-primary" disabled={sending} onClick={send}>{sending ? "Enviando…" : "Enviar denúncia"}</button></div>
         </div>}
       </section>}
 
-      <section className="reports-card" aria-labelledby="reports-history-title"><div className="reports-card-heading"><h2 id="reports-history-title">Minhas denúncias</h2><span className="reports-tag">Acompanhamento</span></div><div className="reports-empty"><span aria-hidden="true">◎</span><h3>Histórico ainda indisponível</h3><p>Quando o serviço estiver disponível, você poderá consultar aqui suas denúncias, o andamento da análise e a resposta da administração.</p></div></section>
+      <section className="reports-card" aria-labelledby="reports-history-title">
+        <div className="reports-card-heading"><h2 id="reports-history-title">Minhas denúncias</h2><button type="button" onClick={history.reload} disabled={history.loading || sending}>Atualizar histórico</button></div>
+        {history.loading ? <p role="status">Carregando denúncias…</p> : history.error ? <p className="reports-error" role="alert">{history.error}</p> : !history.records.length ? <div className="reports-empty"><span aria-hidden="true">◎</span><h3>Você ainda não enviou denúncias</h3><p>Se precisar relatar um problema, use o botão Nova denúncia.</p></div> : history.records.map(item => <details className="reports-history-item" key={item.id}><summary><strong>@{item.denunciado} · {item.motivo}</strong><span className="reports-tag">{statusDenuncia[item.status] || item.status}</span><small>{new Date(item.criada_em).toLocaleDateString("pt-BR")}</small></summary><dl className="reports-details"><div><dt>Protocolo</dt><dd>{item.id}</dd></div><div><dt>Seu relato</dt><dd>{item.descricao}</dd></div><div><dt>Resposta da administração</dt><dd>{item.resposta || "Ainda não há resposta da administração."}</dd></div></dl></details>)}
+      </section>
       <section className="reports-steps" aria-label="Etapas de uma denúncia"><div><span>01</span><h3>Pendente</h3><p>Denúncia recebida, aguardando avaliação.</p></div><div><span>02</span><h3>Em análise</h3><p>A administração está avaliando o relato.</p></div><div><span>03</span><h3>Concluída</h3><p>Análise finalizada, com retorno disponível.</p></div></section>
     </div>
   </main>;

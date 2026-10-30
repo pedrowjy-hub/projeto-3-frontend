@@ -121,3 +121,6 @@
 .exclusao-form { display: grid; gap: 1.25rem; }
 .admin-botao-perigo { background: #a83e32; color: #fff; }
 .admin-botao-perigo:hover:not(:disabled) { background: #8c3026; }
+
+.admin-status-filtro { display:flex; flex-direction:column; gap:.4rem; font-size:.8rem; }
+.admin-status-filtro select { padding:.65rem 1rem; border:1px solid var(--admin-borda); border-radius:.5rem; color:var(--admin-verde); background:#fffef8; font:inherit; }

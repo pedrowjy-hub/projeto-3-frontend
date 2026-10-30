@@ -3,6 +3,7 @@ import "../DetalhesUsuario/index.css";
 
 export default function ConfirmarExclusao({
     usuario,
+    reativar = false,
     excluindo,
     erro,
     onCancelar,
@@ -40,12 +41,12 @@ export default function ConfirmarExclusao({
             }}
         >
             <div className="usuario-modal-cabecalho">
-                <h2 id="exclusao-titulo">Excluir usuário</h2>
+                <h2 id="exclusao-titulo">{reativar ? "Reativar conta" : "Desativar conta"}</h2>
             </div>
 
             <p id="exclusao-descricao" className="exclusao-descricao">
-                Deseja excluir <strong>@{usuario.username}</strong>?
-                {" "}Essa ação não pode ser desfeita.
+                Deseja {reativar ? "reativar" : "desativar"} <strong>@{usuario.username}</strong>?
+                {" "}{reativar ? "O usuário poderá acessar a plataforma novamente." : "Os dados serão preservados, mas o acesso será bloqueado. A administração poderá reativar a conta."}
             </p>
 
             <form className="exclusao-form" onSubmit={handleConfirmar} aria-busy={excluindo}>
@@ -54,7 +55,7 @@ export default function ConfirmarExclusao({
                     <input id="exclusao-senha" name="senha" type="password" autoComplete="current-password"
                         value={senha} onChange={(event) => setSenha(event.target.value)}
                         aria-describedby="exclusao-senha-ajuda" disabled={excluindo} required />
-                    <small id="exclusao-senha-ajuda">Digite a senha da sua conta conectada para confirmar a exclusão.</small>
+                    <small id="exclusao-senha-ajuda">Digite a senha da sua conta conectada para confirmar a alteração.</small>
                 </div>
 
             {erro && (
@@ -79,7 +80,7 @@ export default function ConfirmarExclusao({
                     type="submit"
                     disabled={excluindo || !senha.trim()}
                 >
-                    {excluindo ? "Excluindo..." : "Excluir usuário"}
+                    {excluindo ? "Salvando..." : reativar ? "Reativar conta" : "Desativar conta"}
                 </button>
             </div>
             </form>

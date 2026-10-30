@@ -37,3 +37,8 @@
 .reports-steps h3 { font-size:.95rem; margin:.65rem 0; }
 .reports-steps p { font-size:.8rem; margin:0; }
 @media(max-width:43.75rem) { .reports-fields,.reports-steps { grid-template-columns:1fr; } .reports-card { padding:1.2rem; } .reports-intro { padding:1.25rem; align-items:flex-start; } .reports-symbol { display:none; } .reports-actions > span { width:100%; } }
+
+.reports-history-item { border-top:1px solid var(--dash-line); padding:1rem 0; }
+.reports-history-item summary { display:flex; align-items:center; flex-wrap:wrap; gap:.75rem; cursor:pointer; }
+.reports-history-item summary strong { flex:1; min-width:10rem; overflow-wrap:anywhere; }
+.reports-history-item summary small { color:var(--dash-muted); }
