@@ -28,7 +28,13 @@ export default function Login() {
             }),
         });
         
-        const dados = await resposta.json();
+        const dados = await resposta.json().catch(() => null);
+        if (!dados || typeof dados !== "object") {
+            setErro(resposta.status >= 500
+                ? "O backend está indisponível. Confira se ele iniciou corretamente na porta 5000."
+                : "O servidor retornou uma resposta inválida. Tente novamente.");
+            return;
+        }
 
         if (!resposta.ok) {
             setErro(dados.erro || "Não foi possível entrar.");

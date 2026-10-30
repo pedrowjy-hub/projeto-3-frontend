@@ -5,6 +5,8 @@ const toForm = profile => ({
   nicho: profile.nicho || "",
   descricao: profile.descricao || "",
   plataformas: (profile.plataformas || []).join(", "),
+  cidade: profile.cidade || profile.localizacao?.cidade || "",
+  estado: profile.estado || profile.localizacao?.estado || "",
 });
 
 export default function Perfil({ profile, onUpdate }) {
@@ -33,6 +35,10 @@ export default function Perfil({ profile, onUpdate }) {
       setError("Preencha nome, nicho e ao menos uma plataforma.");
       return;
     }
+    const original = toForm(profile);
+    for (const campo of ["cidade", "estado"]) {
+      if (form[campo].trim() !== original[campo]) data[campo] = form[campo].trim();
+    }
     setSaving(true);
     try {
       const response = await fetch(`/api/usuarios/${encodeURIComponent(profile.username)}`, {
@@ -41,10 +47,13 @@ export default function Perfil({ profile, onUpdate }) {
         body: JSON.stringify(data),
       });
       const result = await response.json().catch(() => ({}));
+      if (!response.ok && result.campos?.some(campo => ["cidade", "estado"].includes(campo))) {
+        throw new Error("O backend ainda não permite salvar cidade e estado. Nenhuma alteração foi salva. Seus dados continuam no formulário.");
+      }
       if (!response.ok) throw new Error(response.status === 401 || response.status === 422 && !result.erro
         ? "Sua sessão expirou. Entre novamente para salvar." : result.erro || "Não foi possível salvar seu perfil.");
       onUpdate({ ...profile, ...data });
-      setForm(toForm(data));
+      setForm(toForm({ ...profile, ...data }));
       setEditing(false);
       setSuccess("Perfil atualizado com sucesso.");
     } catch (err) { setError(err.message); }
@@ -64,12 +73,14 @@ export default function Perfil({ profile, onUpdate }) {
         <fieldset disabled={saving} className="profile-fields">
           <label htmlFor="profile-name">{company ? "Nome da empresa" : "Nome"}<input id="profile-name" name="nome" value={form.nome} onChange={change} required /></label>
           <label htmlFor="profile-niche">{company ? "Segmento / nicho" : "Nicho de conteúdo"}<input id="profile-niche" name="nicho" value={form.nicho} onChange={change} required /></label>
+          <label htmlFor="profile-city">Cidade <small>(opcional)</small><input id="profile-city" name="cidade" value={form.cidade} onChange={change} maxLength={100} autoComplete="address-level2" placeholder="Ex.: São Paulo" /></label>
+          <label htmlFor="profile-state">Estado <small>(opcional)</small><input id="profile-state" name="estado" value={form.estado} onChange={change} maxLength={100} autoComplete="address-level1" placeholder="Ex.: São Paulo ou SP" /><small>Você pode informar apenas a cidade ou apenas o estado.</small></label>
           <label className="profile-wide" htmlFor="profile-bio">{company ? "Sobre a empresa" : "Biografia"}<textarea id="profile-bio" name="descricao" rows={5} value={form.descricao} onChange={change} placeholder="Apresente seu trabalho e o que você busca nas parcerias." /></label>
           <label className="profile-wide" htmlFor="profile-platforms">Plataformas<input id="profile-platforms" name="plataformas" value={form.plataformas} onChange={change} aria-describedby="profile-platform-help" required /><small id="profile-platform-help">Separe por vírgulas. Ex.: Instagram, YouTube, TikTok.</small></label>
         </fieldset>
         {error && <p className="profile-error" role="alert">{error}</p>}
         <div className="profile-actions"><button type="button" className="profile-secondary" disabled={saving} onClick={() => { setEditing(false); setError(""); }}>Cancelar</button><button type="submit" className="profile-primary" disabled={saving}>{saving ? "Salvando…" : "Salvar alterações"}</button></div>
-      </form> : <><dl className="profile-info"><div><dt>Nome de usuário</dt><dd>@{profile.username}</dd></div><div><dt>{company ? "Segmento / nicho" : "Nicho de conteúdo"}</dt><dd>{profile.nicho || "Nicho não informado"}</dd></div><div className="profile-wide"><dt>{company ? "Sobre a empresa" : "Biografia"}</dt><dd className="profile-bio">{profile.descricao || "Você ainda não adicionou uma apresentação. Edite seu perfil para contar mais sobre seu trabalho."}</dd></div></dl><h3 className="profile-platform-title">Plataformas</h3><div className="dash-platforms">{profile.plataformas?.length ? profile.plataformas.map(platform => <span key={platform}>{platform}</span>) : <p>Nenhuma plataforma informada.</p>}</div></>}
+      </form> : <><dl className="profile-info"><div><dt>Nome de usuário</dt><dd>@{profile.username}</dd></div><div><dt>{company ? "Segmento / nicho" : "Nicho de conteúdo"}</dt><dd>{profile.nicho || "Nicho não informado"}</dd></div><div><dt>Cidade</dt><dd>{toForm(profile).cidade || "Cidade não informada"}</dd></div><div><dt>Estado</dt><dd>{toForm(profile).estado || "Estado não informado"}</dd></div><div className="profile-wide"><dt>{company ? "Sobre a empresa" : "Biografia"}</dt><dd className="profile-bio">{profile.descricao || "Você ainda não adicionou uma apresentação. Edite seu perfil para contar mais sobre seu trabalho."}</dd></div></dl><h3 className="profile-platform-title">Plataformas</h3><div className="dash-platforms">{profile.plataformas?.length ? profile.plataformas.map(platform => <span key={platform}>{platform}</span>) : <p>Nenhuma plataforma informada.</p>}</div></>}
     </section>
   </div>;
 }
