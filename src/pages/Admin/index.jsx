@@ -4,6 +4,7 @@ import { useNavigate } from "react-router";
 import FormularioAssinatura from "../../components/FormularioAssinatura";
 import DetalhesUsuario from "../../components/DetalhesUsuario";
 import ConfirmarExclusao from "../../components/ConfirmarExclusao";
+import GerenciamentoDenuncias from "../../components/GerenciamentoDenuncias";
 import "./index.css";
 
 export default function PainelAdmin() {
@@ -352,6 +353,7 @@ export default function PainelAdmin() {
                         )}
                     </div>
                 </section>
+                <GerenciamentoDenuncias />
             </main>
         </div>
     );

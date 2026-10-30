@@ -9,6 +9,7 @@ import Explorar from "./pages/Explorar";
 import Postagens from "./pages/Postagens";
 import Planos from "./pages/Planos";
 import RecursosPremium from "./pages/RecursosPremium";
+import Denuncias from "./pages/Denuncias";
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
       <Route path="/assinatura" element={<Planos />} />
       <Route path="/mensagens" element={<RecursosPremium recurso="mensagens" />} />
       <Route path="/contratos" element={<RecursosPremium recurso="contratos" />} />
+      <Route path="/denuncias" element={<Denuncias />} />
     </Routes>
   );
 }
