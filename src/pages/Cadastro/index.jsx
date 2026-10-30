@@ -36,7 +36,6 @@ export default function Cadastro() {
         }
         const novoUsuario = Object.fromEntries(Object.entries(formulario).map(([chave, valor]) => [chave, chave === "senha" ? valor : valor.trim()]));
         novoUsuario.plataformas = formulario.plataformas.split(",").map((valor) => valor.trim()).filter(Boolean);
-        novoUsuario.assinatura = false;
         if (campos.some(({ name }) => name !== "plataformas" && !novoUsuario[name]) || !novoUsuario.plataformas.length) {
             setErro("Preencha todos os campos e informe pelo menos uma plataforma.");
             return;

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router";
 import Sidebar from "../Dashboard/Sidebar";
 import { getSession } from "../../services/session";
 import "../Dashboard/index.css";
@@ -21,6 +21,7 @@ function ProfileDetails({ profile, onClose }) {
     <p className="dash-handle">@{profile.username}</p>
     <p className="explore-location">{getProfileLocation(profile) || "Localização não informada"}</p>
     <dl><div><dt>Tipo de perfil</dt><dd>{profile.tipo_perfil === "empresa" ? "Empresa" : "Influenciador"}</dd></div><div><dt>Nicho</dt><dd>{profile.nicho || "Não informado"}</dd></div><div><dt>Sobre</dt><dd>{profile.descricao || "Este perfil ainda não adicionou uma descrição."}</dd></div><div><dt>Plataformas</dt><dd>{profile.plataformas?.join(", ") || "Não informadas"}</dd></div></dl>
+    <Link className="contracts-button contracts-primary" to={`/mensagens?parceiro=${encodeURIComponent(profile.username)}`}>Conversar e negociar ↗</Link>
     <button className="explore-primary" type="button" onClick={onClose}>Voltar à exploração</button>
   </dialog>;
 }
