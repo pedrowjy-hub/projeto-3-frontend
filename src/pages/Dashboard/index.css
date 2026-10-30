@@ -14,6 +14,10 @@
 .dash-avatar { display:grid; place-items:center; width:2.125rem; height:2.125rem; border-radius:50%; background:#edc1ae; }
 .dash-account strong { display:block; max-width:8.75rem; overflow-wrap:anywhere; font-size:0.75rem; }
 .dash-account small { display:block; color:var(--dash-muted); font-size:0.625rem; }
+.dash-account { flex-shrink:0; }
+.dash-avatar-premium { background:#e0edaa; box-shadow:0 0 0 2px #b6cc6c; }
+.dash-account-plan { display:inline-flex; margin-top:0.4375rem; border-radius:2rem; }
+.dash-account-plan .plan-badge { font-size:0.5625rem; padding:0.1875rem 0.5rem; }
 .dash-content { width:100%; min-width:0; max-width:90.625rem; padding:2.5rem clamp(1.5rem,4vw,4.0625rem) 4.375rem; }
 .dash-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:2.125rem; }
 .dash-label { margin:0 0 0.5rem; font:0.5625rem/1.5 'DM Mono',monospace; letter-spacing:0.08125rem; color:var(--dash-muted); }
@@ -88,6 +92,15 @@
 .profile-identity h2 { font-size:25px; margin:18px 0 0; overflow-wrap:anywhere; }
 .profile-identity p { color:var(--dash-muted); margin:3px 0 0; overflow-wrap:anywhere; }
 .profile-identity button { margin:20px 0 0 auto; }
+.profile-name-line { display:flex; align-items:center; flex-wrap:wrap; gap:0.75rem; padding-top:1.125rem; }
+.profile-name-line h2 { margin:0; }
+.profile-avatar-premium { background:#e0edaa; box-shadow:0 0 0 2px #b6cc6c; }
+.profile-plan { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:1.25rem; margin-top:1.5rem; padding:1.5rem 1.875rem; border:1px solid var(--dash-line); border-radius:0.75rem; background:#fffef8; }
+.profile-plan-premium { background:#eef0df; border-color:#b6cc6c; }
+.profile-plan > div { flex:1; min-width:min(100%,14rem); }
+.profile-plan h2 { margin:0 0 0.5rem; font-size:1.25rem; }
+.profile-plan p:last-child { max-width:48rem; margin:0; color:var(--dash-muted); font-size:0.8125rem; line-height:1.7; }
+.profile-plan-link { display:inline-flex; align-items:center; gap:1.25rem; white-space:nowrap; }
 .profile-primary,.profile-secondary { padding:11px 18px; border-radius:6px; font:600 12px 'DM Sans',sans-serif; }
 .profile-primary { background:#d9ec75; color:#123d35; border:1px solid #c6d96a; }
 .profile-secondary { background:transparent; color:#123d35; border:1px solid var(--dash-line); }

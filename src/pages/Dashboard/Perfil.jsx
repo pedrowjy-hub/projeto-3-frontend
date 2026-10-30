@@ -1,4 +1,7 @@
 import { useState } from "react";
+import { Link } from "react-router";
+import PlanoBadge from "../../components/PlanoBadge";
+import usePremiumStatus from "../../hooks/usePremiumStatus";
 
 const toForm = profile => ({
   nome: profile.nome || "",
@@ -8,6 +11,7 @@ const toForm = profile => ({
 });
 
 export default function Perfil({ profile, onUpdate }) {
+  const { premium, expiration } = usePremiumStatus(profile);
   const [editing, setEditing] = useState(false);
   const [form, setForm] = useState(() => toForm(profile));
   const [saving, setSaving] = useState(false);
@@ -55,7 +59,11 @@ export default function Perfil({ profile, onUpdate }) {
     <header className="dash-header"><div><p className="dash-label">SEU ESPAÇO / PERFIL</p><h1>Meu perfil</h1></div><span className="dash-role">{company ? "Empresa" : "Influenciador"}</span></header>
     <section className="profile-summary" aria-label="Apresentação do perfil">
       <div className="profile-cover"><span aria-hidden="true">✦</span></div>
-      <div className="profile-identity"><span className="profile-avatar" aria-hidden="true">{initials}</span><div><h2>{profile.nome || profile.username}</h2><p>@{profile.username}</p></div><button type="button" className="profile-primary" disabled={editing} onClick={() => { setForm(toForm(profile)); setEditing(true); setSuccess(""); setError(""); }}>Editar perfil</button></div>
+      <div className="profile-identity"><span className={`profile-avatar${premium ? " profile-avatar-premium" : ""}`} aria-hidden="true">{initials}</span><div><div className="profile-name-line"><h2>{profile.nome || profile.username}</h2><PlanoBadge premium={premium} /></div><p>@{profile.username}</p></div><button type="button" className="profile-primary" disabled={editing} onClick={() => { setForm(toForm(profile)); setEditing(true); setSuccess(""); setError(""); }}>Editar perfil</button></div>
+    </section>
+    <section className={`profile-plan${premium ? " profile-plan-premium" : ""}`} aria-labelledby="profile-plan-title">
+      <div><p className="dash-label">SUA CONTA</p><h2 id="profile-plan-title">{premium ? "Você faz parte do Premium" : "Seu plano é Gratuito"}</h2><p>{premium ? <>Acesso Premium válido até <time dateTime={expiration.toISOString()}>{expiration.toLocaleString("pt-BR")}</time>.{profile.cancelamento_agendado && " A renovação está cancelada; você mantém o período já pago."}</> : "Explore perfis e acompanhe postagens. Chat e contratos são exclusivos do Premium; as interfaces estão em construção."}</p></div>
+      <Link className="profile-primary profile-plan-link" to="/planos">{premium ? "Gerenciar assinatura" : "Conhecer o Premium"}<span aria-hidden="true">↗</span></Link>
     </section>
     {success && <p className="profile-success" role="status">{success}</p>}
     <section className="profile-details">

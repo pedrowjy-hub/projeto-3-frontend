@@ -40,7 +40,7 @@
           token: "test_1bb61cbc7e62c6e93bd4a6add1e",
           checkout: { settings: { displayMode:"overlay", locale:"pt-BR", allowedPaymentMethods:["card"], showAddDiscounts:false } },
           eventCallback: event => {
-            if (event.name === "checkout.completed") statusText.textContent = "Checkout de teste concluído. A confirmação automática do Premium na aplicação ainda está em construção.";
+            if (event.name === "checkout.completed") statusText.textContent = "Checkout de teste concluído. Volte à aplicação para consultar o Premium após a confirmação do pagamento pelo backend.";
             if (event.name === "checkout.closed") retry.hidden = false;
             if (["checkout.error", "checkout.payment-error"].includes(event.name)) statusText.textContent = "Ocorreu um problema no checkout de teste. Feche o checkout e tente novamente.";
           },

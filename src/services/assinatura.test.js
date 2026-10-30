@@ -15,3 +15,12 @@ test("acesso Premium exige assinatura ativa com data válida", () => {
   }
   assert.equal(hasActivePremium(null, now), false);
 });
+
+test("validade UTC tem prioridade sobre data legada e termina no instante exato", () => {
+  const end = Date.parse("2030-02-28T12:30:00Z");
+  const profile = { assinatura: true, premium_ate: "2030-02-28T09:30:00-03:00", expiracao_assinatura: "31-12-2099" };
+  assert.equal(hasActivePremium(profile, end - 1), true);
+  assert.equal(hasActivePremium(profile, end), false);
+  assert.equal(hasActivePremium({ ...profile, premium_ate: null }, end - 1), false);
+  assert.equal(hasActivePremium({ ...profile, premium_ate: "2030-02-28T12:30:00" }, end - 1), false);
+});

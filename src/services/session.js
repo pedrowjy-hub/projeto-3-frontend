@@ -10,14 +10,16 @@ export async function getSession(token) {
     error.status = response.status;
     throw error;
   }
-  // O token identifica o perfil; a autorização administrativa é feita pela API acima.
-  const segment = token.split(".")[1];
-  const normalized = segment.replace(/-/g, "+").replace(/_/g, "/");
-  const payload = JSON.parse(new TextDecoder().decode(
-    Uint8Array.from(atob(normalized.padEnd(Math.ceil(normalized.length / 4) * 4, "=")), c => c.charCodeAt(0)),
-  ));
-  const profileResponse = await fetch(`/api/usuarios/${encodeURIComponent(payload.sub)}`);
-  if (!profileResponse.ok) throw new Error("Não foi possível carregar seu perfil.");
+  // A conta autenticada inclui o plano; o perfil público não expõe a assinatura.
+  const profileResponse = await fetch("/api/me", {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!profileResponse.ok) {
+    const error = new Error([401, 422].includes(profileResponse.status)
+      ? "Sua sessão expirou. Entre novamente." : "Não foi possível carregar seu perfil.");
+    error.status = profileResponse.status;
+    throw error;
+  }
   const profile = await profileResponse.json();
   if (!["empresa", "influenciador"].includes(profile.tipo_perfil)) {
     throw new Error("Seu perfil precisa ser definido como empresa ou influenciador.");

@@ -1,3 +1,5 @@
+import { hasActivePremium } from "../../services/assinatura.js";
+
 export const PROMO_INTERVAL = 7 * 24 * 60 * 60 * 1000;
 
 export function shouldShowPromo({ visits, lastShown = 0 }, now) {
@@ -6,6 +8,7 @@ export function shouldShowPromo({ visits, lastShown = 0 }, now) {
 
 export function hasPremium(account, now) {
   if (account.assinatura !== true) return false;
+  if ("premium_ate" in account) return hasActivePremium(account, now);
   // Sem uma validade conhecida, evite anunciar para quem consta como assinante.
   const match = /^(\d{2})-(\d{2})-(\d{4})$/.exec(account.expiracao_assinatura || "");
   if (!match) return true;

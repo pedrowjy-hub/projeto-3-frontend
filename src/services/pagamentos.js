@@ -43,6 +43,19 @@ export async function createCheckout(token) {
   return data;
 }
 
+export async function cancelRenewal(token) {
+  const response = await fetch("/api/usuarios/me/assinatura/cancelamento", {
+    method: "POST", headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" }, body: "{}",
+  });
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    const error = new Error(data.erro || "Não foi possível cancelar a renovação.");
+    error.status = response.status;
+    throw error;
+  }
+  return data;
+}
+
 export async function openSandboxCheckout(checkout, onEvent) {
   if (checkout.environment !== "sandbox" || !checkout.client_token?.startsWith("test_")
       || !/^txn_[a-z0-9]{26}$/.test(checkout.transaction_id || "")) {

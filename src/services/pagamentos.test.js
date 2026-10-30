@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { createCheckout, openSandboxCheckout } from "./pagamentos.js";
+import { createCheckout, openSandboxCheckout, cancelRenewal } from "./pagamentos.js";
 
 test("checkout enviado sem preço ou usuário controlados pelo cliente", async t => {
   t.mock.method(globalThis, "fetch", async (url, options) => {
@@ -16,6 +16,23 @@ test("checkout enviado sem preço ou usuário controlados pelo cliente", async t
 test("erro de sessão preserva status para redirecionamento ao login", async t => {
   t.mock.method(globalThis, "fetch", async () => ({ ok: false, status: 401, json: async () => ({ erro: "Sessão expirada" }) }));
   await assert.rejects(createCheckout("token_teste"), error => error.status === 401);
+});
+
+test("cancelamento usa identidade do token e preserva estado do período pago", async t => {
+  t.mock.method(globalThis, "fetch", async (url, options) => {
+    assert.equal(url, "/api/usuarios/me/assinatura/cancelamento");
+    assert.equal(options.body, "{}");
+    assert.equal(options.headers.Authorization, "Bearer token_teste");
+    return { ok: true, json: async () => ({ assinatura: true, cancelamento_agendado: true, premium_ate: "2030-02-28T12:30:00Z" }) };
+  });
+  const state = await cancelRenewal("token_teste");
+  assert.equal(state.assinatura, true);
+  assert.equal(state.cancelamento_agendado, true);
+});
+
+test("erro de cancelamento não é apresentado como sucesso", async t => {
+  t.mock.method(globalThis, "fetch", async () => ({ ok: false, status: 502, json: async () => ({ erro: "Provedor indisponível" }) }));
+  await assert.rejects(cancelRenewal("token_teste"), error => error.status === 502 && error.message === "Provedor indisponível");
 });
 
 test("não abre checkout de produção ou sem identificador válido", async () => {
