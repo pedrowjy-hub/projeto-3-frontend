@@ -24,6 +24,7 @@
 .admin-reports-guide li { margin:.75rem 0; }
 .admin-reports-analysis { margin-top:1.5rem; padding-top:1.5rem; border-top:1px solid var(--admin-borda); }
 .admin-reports-analysis label { margin-top:1rem; }
+.admin-reports-analysis > .admin-botao { margin-top:1.25rem; }
 .admin-reports-analysis dt { color:#62766c; font-size:.8rem; }
 .admin-reports-analysis dd { margin:.4rem 0 1rem; white-space:pre-wrap; overflow-wrap:anywhere; }
 @media(max-width:43.75rem) { .admin-reports { padding:1.1rem; } .admin-reports-filters,.admin-reports-counts { grid-template-columns:1fr; } }
