@@ -5,7 +5,7 @@ import usePremiumStatus from "../../hooks/usePremiumStatus";
 
 const tabs = ["Início", "Configurações", "Explorar", "Postagens", "Mensagens", "Contratos", "Avaliações", "Planos", "Perfil", "Denúncias"];
 
-const routes = { "Início": "/inicio", "Configurações": "/configuracoes", "Explorar": "/explorar", "Postagens": "/postagens", "Mensagens": "/mensagens", "Contratos": "/contratos", "Planos": "/planos", "Perfil": "/perfil" };
+const routes = { "Início": "/inicio", "Configurações": "/configuracoes", "Explorar": "/explorar", "Postagens": "/postagens", "Mensagens": "/mensagens", "Contratos": "/contratos", "Planos": "/planos", "Perfil": "/perfil", "Denúncias": "/denuncias" };
 
 export default function Sidebar({ profile }) {
   const { premium } = usePremiumStatus(profile);

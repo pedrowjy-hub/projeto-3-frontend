@@ -1,7 +1,7 @@
 .explore-intro { margin-bottom:1.875rem; padding:2rem; border:0.0625rem solid var(--dash-line); border-radius:0.75rem; background:#eeeee3; }
 .explore-intro h2 { margin:0.625rem 0 0.75rem; font-size:1.875rem; line-height:1.15; letter-spacing:-0.0625rem; max-width:37.5rem; }
 .explore-intro > p:last-child { margin:0; max-width:40.625rem; color:var(--dash-muted); font-size:0.8125rem; }
-.explore-filters { display:grid; grid-template-columns:2fr 1fr 1fr auto; gap:1rem; align-items:end; padding:1.4375rem; border:0.0625rem solid var(--dash-line); border-radius:0.5625rem; background:#fffef8; margin-bottom:2.125rem; }
+.explore-filters { display:grid; grid-template-columns:minmax(0,2fr) repeat(3,minmax(0,1fr)); gap:1rem; align-items:end; padding:1.4375rem; border:0.0625rem solid var(--dash-line); border-radius:0.5625rem; background:#fffef8; margin-bottom:2.125rem; }
 .explore-page label { display:flex; flex-direction:column; gap:0.4375rem; min-width:0; color:var(--dash-muted); font-size:0.6875rem; }
 .explore-page input,.explore-page select { width:100%; min-width:0; padding:0.6875rem 0.75rem; border:0.0625rem solid var(--dash-line); border-radius:0.3125rem; background:#faf9f2; color:var(--dash-ink); font:0.75rem 'DM Sans',sans-serif; }
 .explore-page button { font:inherit; cursor:pointer; }
@@ -27,3 +27,7 @@
 @media(max-width:68.75rem) { .explore-filters { grid-template-columns:1fr 1fr; }.explore-search { grid-column:1/-1; }.explore-clear { justify-self:start; } }
 @media(max-width:43.75rem) { .explore-intro { padding:1.5rem; }.explore-intro h2 { font-size:1.625rem; }.explore-filters { padding:1.125rem; gap:1rem; }.explore-results-header { align-items:start; }.explore-results-header label { min-width:7.8125rem; }.explore-dialog { padding:1.5rem; } }
 @media(max-width:25rem) { .explore-filters { grid-template-columns:1fr; }.explore-results-header { flex-direction:column; } }
+
+.explore-filters > .explore-clear { justify-self:start; }
+.explore-location-help { grid-column:1/-1; margin:0; font-size:0.6875rem; color:var(--dash-muted); }
+.explore-location { color:#62766c; font-size:0.75rem; margin:0.5rem 0 1rem; }

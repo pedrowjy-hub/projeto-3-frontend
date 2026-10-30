@@ -106,7 +106,7 @@ export default function Configuracoes() {
             if (resposta.status === 401) { sair(); return; }
             if (!resposta.ok) {
                 const resultado = await resposta.json().catch(() => ({}));
-                throw new Error(resultado.erro || "Não foi possível excluir sua conta.");
+                throw new Error(resultado.erro || "Não foi possível desativar sua conta.");
             }
             sair();
         } catch (error) { setErroExclusao(error.message); }
@@ -143,7 +143,7 @@ export default function Configuracoes() {
             <section className="settings-card settings-security" id="seguranca" aria-labelledby="seguranca-titulo">
                 <div className="settings-card-heading"><span className="settings-icon" aria-hidden="true">◇</span><div><h2 id="seguranca-titulo">Acesso e segurança</h2><p>Você decide quando encerrar sua sessão ou sua conta.</p></div></div>
                 <div className="settings-action"><div><h3>Sair da conta</h3><p>Encerre sua sessão neste navegador.</p></div><button type="button" className="settings-button" onClick={sair} disabled={salvando || excluindo}>Sair da conta ↗</button></div>
-                <div className="settings-action settings-danger"><div><h3>Excluir minha conta</h3><p>A exclusão é permanente e exige sua senha atual.</p></div><button type="button" className="settings-button" disabled={salvando || excluindo} onClick={() => { setErroExclusao(""); setExcluir(true); }}>Excluir conta</button></div>
+                <div className="settings-action settings-danger"><div><h3>Desativar minha conta</h3><p>Seu acesso será bloqueado e seus dados preservados. Para reativar, entre em contato com a administração.</p></div><button type="button" className="settings-button" disabled={salvando || excluindo} onClick={() => { setErroExclusao(""); setExcluir(true); }}>Desativar conta</button></div>
             </section>
             <p className="settings-footer">nexo<span>.</span> · Conexões que fazem sentido.</p>
         </div>

@@ -4,6 +4,7 @@ import Sidebar from "../Dashboard/Sidebar";
 import { getSession } from "../../services/session";
 import "../Dashboard/index.css";
 import "./index.css";
+import { getProfileLocation } from "./location";
 
 const normalize = (value) => String(value || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
 
@@ -18,6 +19,7 @@ function ProfileDetails({ profile, onClose }) {
     <header><p className="dash-label">CONHEÇA ESTE PERFIL</p><button type="button" onClick={onClose} aria-label="Fechar detalhes">×</button></header>
     <h2 id="explore-profile-title">{profile.nome || profile.username}</h2>
     <p className="dash-handle">@{profile.username}</p>
+    <p className="explore-location">{getProfileLocation(profile) || "Localização não informada"}</p>
     <dl><div><dt>Tipo de perfil</dt><dd>{profile.tipo_perfil === "empresa" ? "Empresa" : "Influenciador"}</dd></div><div><dt>Nicho</dt><dd>{profile.nicho || "Não informado"}</dd></div><div><dt>Sobre</dt><dd>{profile.descricao || "Este perfil ainda não adicionou uma descrição."}</dd></div><div><dt>Plataformas</dt><dd>{profile.plataformas?.join(", ") || "Não informadas"}</dd></div></dl>
     <button className="explore-primary" type="button" onClick={onClose}>Voltar à exploração</button>
   </dialog>;
@@ -32,6 +34,7 @@ export default function Explorar() {
   const [search, setSearch] = useState("");
   const [niche, setNiche] = useState("");
   const [platform, setPlatform] = useState("");
+  const [location, setLocation] = useState("");
   const [sort, setSort] = useState("asc");
   const [selected, setSelected] = useState(null);
   const [attempt, setAttempt] = useState(0);
@@ -61,13 +64,15 @@ export default function Explorar() {
   }, [navigate, attempt]);
 
   const company = profile?.tipo_perfil === "empresa";
+  const hasLocations = profiles.some(item => getProfileLocation(item));
   const niches = [...new Set(profiles.map(item => item.nicho).filter(Boolean))].sort((a, b) => a.localeCompare(b, "pt-BR"));
   const platforms = [...new Set(profiles.flatMap(item => item.plataformas || []))].sort((a, b) => a.localeCompare(b, "pt-BR"));
   const filtered = profiles.filter(item =>
     (!niche || item.nicho === niche) && (!platform || item.plataformas?.includes(platform)) &&
+    (!location.trim() || normalize(getProfileLocation(item)).includes(normalize(location))) &&
     normalize([item.nome, item.username, item.nicho, item.descricao, ...(item.plataformas || [])].join(" ")).includes(normalize(search))
   ).sort((a, b) => (sort === "asc" ? 1 : -1) * (a.nome || a.username).localeCompare(b.nome || b.username, "pt-BR"));
-  function clearFilters() { setSearch(""); setNiche(""); setPlatform(""); setSort("asc"); }
+  function clearFilters() { setSearch(""); setNiche(""); setPlatform(""); setLocation(""); setSort("asc"); }
   if (!profile) return <main className="dash-page dash-status"><p role={error ? "alert" : "status"}>{error || "Carregando seu espaço…"}</p>{error && <a href="/login">Voltar ao login</a>}</main>;
 
   return <main className="dash-page explore-page">
@@ -79,7 +84,9 @@ export default function Explorar() {
         <label className="explore-search">Buscar<input type="search" placeholder="Nome, nicho ou palavra-chave" value={search} onChange={e => setSearch(e.target.value)} /></label>
         <label>Nicho<select value={niche} onChange={e => setNiche(e.target.value)}><option value="">Todos os nichos</option>{niches.map(value => <option key={value}>{value}</option>)}</select></label>
         <label>Plataforma<select value={platform} onChange={e => setPlatform(e.target.value)}><option value="">Todas as plataformas</option>{platforms.map(value => <option key={value}>{value}</option>)}</select></label>
+        <label className="explore-location-filter">Localização<input type="search" placeholder="Cidade ou estado" value={location} onChange={e => setLocation(e.target.value)} aria-describedby={!loading && !error && !hasLocations ? "explore-location-help" : undefined} /></label>
         <button className="explore-clear" type="button" onClick={clearFilters}>Limpar filtros</button>
+        {!loading && !error && !hasLocations && <p className="explore-location-help" id="explore-location-help">Os perfis disponíveis ainda não possuem localização informada.</p>}
       </section>
       <section aria-labelledby="explore-results-title" aria-busy={loading}>
         <div className="explore-results-header"><div><h2 id="explore-results-title">{company ? "Influenciadores" : "Empresas"}</h2><p role="status">{loading ? "Buscando perfis…" : error ? "Perfis indisponíveis" : `${filtered.length} ${filtered.length === 1 ? "perfil encontrado" : "perfis encontrados"}`}</p></div><label>Ordenar por<select value={sort} onChange={e => setSort(e.target.value)}><option value="asc">Nome: A–Z</option><option value="desc">Nome: Z–A</option></select></label></div>
