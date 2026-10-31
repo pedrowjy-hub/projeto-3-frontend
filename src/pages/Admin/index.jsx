@@ -255,7 +255,7 @@ export default function PainelAdmin() {
                         className="admin-botao admin-botao-secundario"
                         type="button"
                         onClick={handleSair}
-                    >Sair</button>
+                    >Sair da conta</button>
                 </div>
             </header>
 
