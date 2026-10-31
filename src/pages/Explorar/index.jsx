@@ -23,6 +23,7 @@ function ProfileDetails({ profile, isCompany, onClose }) {
     <dl><div><dt>Tipo de perfil</dt><dd>{profile.tipo_perfil === "empresa" ? "Empresa" : "Influenciador"}</dd></div><div><dt>Nicho</dt><dd>{profile.nicho || "Não informado"}</dd></div><div><dt>Sobre</dt><dd>{profile.descricao || "Este perfil ainda não adicionou uma descrição."}</dd></div><div><dt>Plataformas</dt><dd>{profile.plataformas?.join(", ") || "Não informadas"}</dd></div></dl>
     <div className="explore-dialog-actions">
       {isCompany && profile.tipo_perfil === "influenciador" && <Link className="explore-dialog-action explore-dialog-action-primary" to={`/analises/${encodeURIComponent(profile.username)}`}>Ver análise do YouTube <span aria-hidden="true">↗</span></Link>}
+      {isCompany && profile.tipo_perfil === "influenciador" && <Link className="explore-dialog-action" to={`/avaliacoes?username=${encodeURIComponent(profile.username)}`}>Ver avaliações <span aria-hidden="true">★</span></Link>}
       <Link className="explore-dialog-action" to={`/mensagens?parceiro=${encodeURIComponent(profile.username)}`}>Conversar e negociar ↗</Link>
       <button className="explore-dialog-action explore-dialog-action-secondary" type="button" onClick={onClose}>Voltar à exploração</button>
     </div>

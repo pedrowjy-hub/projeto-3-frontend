@@ -12,6 +12,7 @@ import Mensagens from "./pages/Mensagens";
 import Contratos from "./pages/Contratos";
 import Denuncias from "./pages/Denuncias";
 import Analises from "./pages/Analises";
+import Avaliacoes from "./pages/Avaliacoes";
 
 function App() {
   return (
@@ -31,6 +32,7 @@ function App() {
       <Route path="/mensagens" element={<Mensagens />} />
       <Route path="/contratos" element={<Contratos />} />
       <Route path="/denuncias" element={<Denuncias />} />
+      <Route path="/avaliacoes" element={<Avaliacoes />} />
       <Route path="/analises" element={<Analises />} />
       <Route path="/analises/:username" element={<Analises />} />
     </Routes>
