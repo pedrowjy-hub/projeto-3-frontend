@@ -11,6 +11,7 @@ import Planos from "./pages/Planos";
 import Mensagens from "./pages/Mensagens";
 import Contratos from "./pages/Contratos";
 import Denuncias from "./pages/Denuncias";
+import Analises from "./pages/Analises";
 
 function App() {
   return (
@@ -30,6 +31,7 @@ function App() {
       <Route path="/mensagens" element={<Mensagens />} />
       <Route path="/contratos" element={<Contratos />} />
       <Route path="/denuncias" element={<Denuncias />} />
+      <Route path="/analises" element={<Analises />} />
     </Routes>
   );
 }

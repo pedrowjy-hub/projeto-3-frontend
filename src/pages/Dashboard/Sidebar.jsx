@@ -12,6 +12,7 @@ export default function Sidebar({ profile }) {
   return <><BoasVindasPremium username={profile.username} subscriptionId={profile.paddle_subscription_id} premium={premium} /><aside className="dash-sidebar">
     <p className="dash-sidebar-label">SEU ESPAÇO</p>
     <nav aria-label="Menu do dashboard">
+      {profile.tipo_perfil === "influenciador" && <NavLink to="/analises">{({ isActive }) => <>Análise{isActive && <span aria-hidden="true">↗</span>}</>}</NavLink>}
       {tabs.map((tab) => routes[tab]
         ? <NavLink key={tab} to={routes[tab]} end={tab === "Início"}>{({ isActive }) => <>{tab}{isActive && <span aria-hidden="true">↗</span>}</>}</NavLink>
         : <span className="dash-tab-placeholder" key={tab}>{tab}</span>)}
