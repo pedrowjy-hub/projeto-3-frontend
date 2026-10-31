@@ -4,7 +4,10 @@
 .posts-compose { padding:2rem; }
 .posts-compose-header { display:flex; align-items:flex-start; gap:1rem; margin-bottom:1.5rem; }
 .posts-compose-header > div { flex:1; min-width:0; }
-.posts-close { display:grid; place-items:center; flex-shrink:0; width:2rem; height:2rem; border:0.0625rem solid var(--dash-line); border-radius:50%; color:var(--dash-ink); background:transparent; font:inherit; font-size:1.375rem; }
+.posts-close { display:grid; place-items:center; flex-shrink:0; width:2.5rem; height:2.5rem; margin:-0.25rem -0.375rem 0 0; padding:0; border:0; border-radius:50%; color:var(--dash-muted); background:transparent; cursor:pointer; transition:color .18s,background .18s; }
+.posts-close svg { width:1.125rem; height:1.125rem; fill:none; stroke:currentColor; stroke-linecap:round; stroke-width:1.7; }
+.posts-close:hover:not(:disabled) { color:var(--dash-ink); background:var(--appearance-soft); }
+.posts-close:focus-visible { outline:0.1875rem solid var(--appearance-focus); outline-offset:0.125rem; }
 .posts-compose h2 { margin:0.625rem 0 1rem; max-width:18.75rem; font-size:2.125rem; line-height:1.12; letter-spacing:-0.0625rem; }
 .posts-compose-header p:last-child { color:var(--dash-muted); margin-bottom:0; }
 .posts-compose fieldset { margin:0; padding:0; border:0; min-width:0; display:flex; flex-direction:column; gap:1rem; }
