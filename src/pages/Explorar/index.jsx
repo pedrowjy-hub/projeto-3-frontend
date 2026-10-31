@@ -8,7 +8,7 @@ import { getProfileLocation } from "./location";
 
 const normalize = (value) => String(value || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
 
-function ProfileDetails({ profile, onClose }) {
+function ProfileDetails({ profile, isCompany, onClose }) {
   const dialog = useRef(null);
   useEffect(() => {
     const element = dialog.current;
@@ -21,8 +21,11 @@ function ProfileDetails({ profile, onClose }) {
     <p className="dash-handle">@{profile.username}</p>
     <p className="explore-location">{getProfileLocation(profile) || "Localização não informada"}</p>
     <dl><div><dt>Tipo de perfil</dt><dd>{profile.tipo_perfil === "empresa" ? "Empresa" : "Influenciador"}</dd></div><div><dt>Nicho</dt><dd>{profile.nicho || "Não informado"}</dd></div><div><dt>Sobre</dt><dd>{profile.descricao || "Este perfil ainda não adicionou uma descrição."}</dd></div><div><dt>Plataformas</dt><dd>{profile.plataformas?.join(", ") || "Não informadas"}</dd></div></dl>
-    <Link className="contracts-button contracts-primary" to={`/mensagens?parceiro=${encodeURIComponent(profile.username)}`}>Conversar e negociar ↗</Link>
-    <button className="explore-primary" type="button" onClick={onClose}>Voltar à exploração</button>
+    <div className="explore-dialog-actions">
+      {isCompany && profile.tipo_perfil === "influenciador" && <Link className="explore-dialog-action explore-dialog-action-primary" to={`/analises/${encodeURIComponent(profile.username)}`}>Ver análise do YouTube <span aria-hidden="true">↗</span></Link>}
+      <Link className="explore-dialog-action" to={`/mensagens?parceiro=${encodeURIComponent(profile.username)}`}>Conversar e negociar ↗</Link>
+      <button className="explore-dialog-action explore-dialog-action-secondary" type="button" onClick={onClose}>Voltar à exploração</button>
+    </div>
   </dialog>;
 }
 
@@ -94,6 +97,6 @@ export default function Explorar() {
         {loading ? <div className="dash-empty" role="status">Carregando perfis…</div> : error ? <div className="dash-empty"><p role="alert">{error}</p><button className="explore-primary" onClick={() => setAttempt(value => value + 1)}>Tentar novamente</button></div> : filtered.length === 0 ? <div className="dash-empty"><span aria-hidden="true">⌕</span><h3>{profiles.length ? "Nenhum perfil encontrado" : "Novas conexões em breve"}</h3><p>{profiles.length ? "Tente outra busca ou remova os filtros." : "Os perfis cadastrados aparecerão aqui."}</p>{profiles.length > 0 && <button className="explore-clear" onClick={clearFilters}>Limpar filtros</button>}</div> : <div className="dash-grid">{filtered.map((item, index) => <article className="dash-card" key={item.username}><div className={`dash-card-cover dash-cover-${index % 3}`}><span>{(item.nome || item.username).slice(0, 2).toUpperCase()}</span><small>{company ? "CREATOR" : "EMPRESA"}</small></div><div className="dash-card-body"><h3>{item.nome || item.username}</h3><p className="dash-handle">@{item.username}</p><p className="dash-niche">{item.nicho || "Nicho não informado"}</p><p className="dash-bio">{item.descricao || "Conheça este perfil e descubra novas possibilidades de parceria."}</p><div className="dash-platforms">{(item.plataformas || []).map(value => <span key={value}>{value}</span>)}</div><button className="explore-card-button" type="button" onClick={() => setSelected(item)}>Conhecer perfil <span>↗</span></button></div></article>)}</div>}
       </section>
     </div>
-    {selected && <ProfileDetails profile={selected} onClose={() => setSelected(null)} />}
+    {selected && <ProfileDetails profile={selected} isCompany={company} onClose={() => setSelected(null)} />}
   </main>;
 }

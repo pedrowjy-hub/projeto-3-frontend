@@ -31,3 +31,28 @@
 .explore-filters > .explore-clear { justify-self:start; }
 .explore-location-help { grid-column:1/-1; margin:0; font-size:0.6875rem; color:var(--dash-muted); }
 .explore-location { color:var(--appearance-muted); font-size:0.75rem; margin:0.5rem 0 1rem; }
+.explore-dialog-actions { display:flex; flex-direction:column; gap:0.625rem; margin-top:1.5rem; }
+.explore-dialog-action { display:flex; width:100%; min-height:2.75rem; align-items:center; justify-content:center; gap:0.5rem; padding:0.6875rem 1rem; border:1px solid var(--appearance-primary); border-radius:0.375rem; background:var(--appearance-primary); color:#fffef8!important; font:600 0.75rem 'DM Sans',sans-serif; text-align:center; text-decoration:none!important; }
+.explore-dialog-action:hover { background:var(--appearance-primary-hover); }
+.explore-dialog-action-secondary { border-color:var(--appearance-line); background:var(--appearance-surface); color:var(--appearance-ink)!important; }
+.explore-dialog-action-secondary:hover { background:var(--appearance-soft); }
+
+.explore-intro {
+  position:relative;
+  overflow:hidden;
+  border:0;
+  background:radial-gradient(ellipse at 95% 8%,#d9ec7566 0,transparent 27%),linear-gradient(120deg,#123d35,#1e5948 70%,#356b48);
+  color:#fffef8;
+}
+.explore-intro::after { position:absolute; right:3rem; bottom:-5.5rem; width:13rem; height:13rem; border:1px solid #ffffff32; border-radius:50%; content:""; pointer-events:none; }
+.explore-intro .dash-label { color:#d9ec75; }
+.explore-intro h2 { position:relative; z-index:1; color:#fffef8; }
+.explore-intro > p:last-child { position:relative; z-index:1; color:#d4e1d5; }
+.explore-filters { border-top:3px solid #d36b4c; background:linear-gradient(110deg,#fffef8,#f8f6ed); box-shadow:0 0.45rem 1.25rem #123d3509; }
+.explore-page input:focus-visible,.explore-page select:focus-visible { outline:2px solid var(--appearance-focus); outline-offset:2px; }
+.explore-page .dash-card { transition:transform .18s ease,box-shadow .18s ease; }
+.explore-page .dash-card:hover { transform:translateY(-3px); box-shadow:0 0.8rem 1.75rem #123d351a; }
+.explore-card-button { color:#236653; }
+.explore-card-button span { color:#d36b4c; }
+:root[data-theme="escuro"] .explore-filters { background:var(--appearance-surface); }
+:root[data-high-contrast="true"] .explore-intro { border:2px solid var(--appearance-line); }

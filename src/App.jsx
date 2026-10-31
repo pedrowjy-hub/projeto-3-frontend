@@ -32,6 +32,7 @@ function App() {
       <Route path="/contratos" element={<Contratos />} />
       <Route path="/denuncias" element={<Denuncias />} />
       <Route path="/analises" element={<Analises />} />
+      <Route path="/analises/:username" element={<Analises />} />
     </Routes>
   );
 }
