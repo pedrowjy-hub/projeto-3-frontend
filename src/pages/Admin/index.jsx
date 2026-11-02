@@ -252,10 +252,10 @@ export default function PainelAdmin() {
                     <span className="admin-area">Administração</span>
                     <span className="admin-perfil"><span aria-hidden="true">A</span> Painel de gestão</span>
                     <button
-                        className="admin-botao admin-botao-secundario"
+                        className="admin-botao admin-botao-sair"
                         type="button"
                         onClick={handleSair}
-                    >Sair da conta</button>
+                    ><span aria-hidden="true">↪</span>Sair da conta</button>
                 </div>
             </header>
 

@@ -40,6 +40,10 @@
 .admin-botao-primario > span { font-size: 1.25rem; line-height: 1; font-weight: 400; }
 .admin-botao-secundario { background: transparent; color: var(--admin-verde); border-color: #d6dbd0; }
 .admin-botao-secundario:hover:not(:disabled) { background: #eeefe5; }
+.admin-botao-sair { min-height: 2.75rem; padding: 0.625rem 0.875rem; border: 0.0625rem solid #d8b9aa; border-radius: 0.5rem; background: #fff6f0; color: #8d4937; font: 600 0.75rem 'DM Sans',sans-serif; cursor: pointer; transition: background .18s,border-color .18s,color .18s; }
+.admin-botao-sair > span { font-size: 1rem; }
+.admin-botao-sair:hover:not(:disabled) { border-color: #c77b61; background: #f8e6dc; color: #733725; }
+.admin-botao-sair:focus-visible { outline: 0.1875rem solid #567845; outline-offset: 0.1875rem; }
 .admin-usuarios { border: 0.0625rem solid var(--admin-borda); background: #fffefa; border-radius: 1.25rem; overflow: hidden; }
 .admin-lista-cabecalho { display: flex; justify-content: space-between; align-items: center; gap: 1.5rem; padding: 1.6875rem 1.75rem; }
 .admin-lista-titulo { display: flex; align-items: center; gap: 0.625rem; }
