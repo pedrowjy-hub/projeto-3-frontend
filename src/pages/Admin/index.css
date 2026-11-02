@@ -129,4 +129,17 @@
 .admin-botao-perigo:hover:not(:disabled) { background: #8c3026; }
 
 .admin-status-filtro { display:flex; flex-direction:column; gap:.4rem; font-size:.8rem; }
-.admin-status-filtro select { padding:.65rem 1rem; border:1px solid var(--admin-borda); border-radius:.5rem; color:var(--admin-verde); background:#fffef8; font:inherit; }
+.admin-status-filtro select {
+    appearance: none;
+    padding: .65rem 2.75rem .65rem 1rem;
+    border: 1px solid var(--admin-borda);
+    border-radius: .5rem;
+    color: var(--admin-verde);
+    background-color: #fffef8;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23203f35' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 1rem;
+    font: inherit;
+    cursor: pointer;
+}
