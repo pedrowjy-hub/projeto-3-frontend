@@ -69,12 +69,7 @@ export default function TelaPrincipal() {
             <p className="eyebrow"><span>✦</span> Onde boas parcerias começam</p>
             <h1>Encontre.<br />Conecte.<br /><em>Crie.</em></h1>
             <p className="hero-description">A plataforma que aproxima marcas e creators para transformar boas ideias em parcerias que geram resultado.</p>
-            <div className="audience-switch">
-              <button className="selected">Sou uma empresa</button>
-              <button>Sou creator</button>
-            </div>
-            <label className="hero-search"><span>⌕</span><input placeholder="Busque por nicho, nome ou cidade" /><button aria-label="Buscar">→</button></label>
-            <a className="text-link" href="#creators">Explorar agora <span>↘</span></a>
+
           </div>
 
           <div className="hero-visual">
@@ -100,7 +95,7 @@ export default function TelaPrincipal() {
         <div className="filters"><button className="active">Todos</button><button>Moda</button><button>Viagem</button><button>Esporte</button></div>
         <div className="creator-grid">
           {creators.map((creator) => <article className="creator-card" key={creator.name}>
-            <div className="creator-image"><img src={creator.image} alt={creator.name} /><button aria-label={`Adicionar ${creator.name} aos favoritos`}>♡</button>{creator.featured && <span className="featured">EM DESTAQUE</span>}</div>
+            <div className="creator-image"><img src={creator.image} alt={creator.name} />{creator.featured && <span className="featured">EM DESTAQUE</span>}</div>
             <div className="creator-details"><div className="creator-title"><div><h3>{creator.name} <b>✓</b></h3><p>{creator.handle} &nbsp;·&nbsp; {creator.place}</p></div><span className="score">★ {creator.rating}</span></div><p className="category">{creator.category}</p><div className="creator-stats"><span><b>{creator.followers}</b><small>SEGUIDORES</small></span><span><b>{creator.engagement}</b><small>ENGAJAMENTO</small></span><span><b>{creator.projects}</b><small>TRABALHOS</small></span></div></div>
           </article>)}
         </div>
