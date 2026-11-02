@@ -1,5 +1,6 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router";
+import { buscarPerfil } from "../../services/perfis";
 import Sidebar from "../Dashboard/Sidebar";
 import { getSession } from "../../services/session";
 import usePremiumStatus from "../../hooks/usePremiumStatus";
@@ -21,7 +22,10 @@ export default function Avaliacoes() {
   const [profile, setProfile] = useState(null);
   const [influencers, setInfluencers] = useState([]);
   const [selectedUsername, setSelectedUsername] = useState(() => new URLSearchParams(window.location.search).get("username") || "");
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState(() => new URLSearchParams(window.location.search).get("username") || "");
+  const [searching, setSearching] = useState(false);
+  const lookup = useRef(null);
+  useEffect(() => () => lookup.current?.abort(), []);
   const [summary, setSummary] = useState(null);
   const [summaryFor, setSummaryFor] = useState("");
   const [reviews, setReviews] = useState([]);
@@ -43,9 +47,6 @@ export default function Avaliacoes() {
   const selected = influencers.find((item) => item.username === selectedUsername);
   const visibleSummary = summaryFor === selectedUsername ? summary : null;
   const visibleReviews = reviewsFor === selectedUsername ? reviews : [];
-  const filteredInfluencers = useMemo(() => influencers.filter((item) =>
-    `${item.nome || ""} ${item.username} ${item.nicho || ""}`.toLocaleLowerCase("pt-BR")
-      .includes(search.trim().toLocaleLowerCase("pt-BR"))), [influencers, search]);
 
   useEffect(() => {
     let active = true;
@@ -63,14 +64,7 @@ export default function Avaliacoes() {
           setSelectedUsername(user.username);
           return;
         }
-        const response = await fetch("/api/usuarios?tipo_perfil=influenciador", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        const creators = await readResponse(response);
-        if (!active) return;
-        if (!Array.isArray(creators)) throw new Error("A lista de influenciadores está indisponível.");
-        const available = creators.filter((item) => item.tipo_perfil === "influenciador");
-        setInfluencers(available);
+
       } catch (err) {
         if (!active) return;
         if (err.status === 401 || err.status === 422) {
@@ -163,6 +157,19 @@ export default function Avaliacoes() {
     } finally { setSaving(false); }
   }
 
+  async function searchProfile(event) {
+    event.preventDefault();
+    lookup.current?.abort(); const controller = new AbortController(); lookup.current = controller;
+    setSearching(true); setError(""); setSelectedUsername("");
+    try {
+      const target = await buscarPerfil(search, controller.signal);
+      if (controller.signal.aborted) return;
+      if (target.tipo_perfil !== "influenciador") throw new Error("Selecione o username de um influenciador para avaliar.");
+      setInfluencers([target]); chooseInfluencer(target.username);
+    } catch (err) { if (!controller.signal.aborted) setError(err.message); }
+    finally { if (!controller.signal.aborted) setSearching(false); }
+  }
+
   function chooseInfluencer(username) {
     setSelectedUsername(username);
     setError("");
@@ -195,17 +202,17 @@ export default function Avaliacoes() {
       {company && <section className="ratings-picker ratings-panel" aria-labelledby="ratings-picker-title">
         <div className="ratings-panel-heading"><div><p className="dash-label">ENCONTRE UM PERFIL</p><h2 id="ratings-picker-title">Quem você quer avaliar?</h2></div><span aria-hidden="true">⌕</span></div>
         {error && <p className="ratings-error" role="alert">{error}</p>}
-        {influencers.length > 0 ? <div className="ratings-picker-fields">
-          <label htmlFor="ratings-search">Buscar por nome ou nicho<input id="ratings-search" type="search" value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Ex.: moda, tecnologia, @username" /></label>
-          <label htmlFor="ratings-creator">Influenciador<select id="ratings-creator" value={selectedUsername} onChange={(event) => chooseInfluencer(event.target.value)}><option value="">Selecione um perfil</option>{filteredInfluencers.map((item) => <option key={item.username} value={item.username}>{item.nome || item.username} · @{item.username}</option>)}</select></label>
-        </div> : loading ? <p role="status">Carregando influenciadores…</p> : !error && <div className="ratings-empty"><h3>Nenhum influenciador disponível</h3><p>Os perfis cadastrados aparecerão aqui para consulta.</p></div>}
+        <form className="ratings-picker-fields" onSubmit={searchProfile}>
+          <label htmlFor="ratings-search">Username do influenciador<input id="ratings-search" type="search" value={search} onChange={event => setSearch(event.target.value)} placeholder="Digite o username, com ou sem @" required maxLength={200} autoComplete="off" spellCheck={false} disabled={searching || saving} /></label>
+          <button className="ratings-primary" type="submit" disabled={searching || saving || !search.trim()}>{searching ? "Buscando…" : "Buscar perfil →"}</button>
+        </form>
       </section>}
 
       {!company && <section className="ratings-self-note"><span aria-hidden="true">✦</span><p>Esta é a nota pública do seu perfil. As avaliações são enviadas por empresas após uma experiência de parceria.</p></section>}
 
       {selectedUsername && <>
         <section className="ratings-summary-panel ratings-panel" aria-label="Resumo das avaliações" aria-busy={!visibleSummary && !error}>
-          <div className="ratings-profile-mark" aria-hidden="true">{((selected?.nome || profile.nome || selectedUsername).slice(0, 1)).toLocaleUpperCase("pt-BR")}</div>
+          <div className="ratings-profile-mark" aria-hidden="true">{((selected?.nome || (company ? selectedUsername : profile.nome)).slice(0, 1)).toLocaleUpperCase("pt-BR")}</div>
           <div className="ratings-profile-info"><p className="dash-label">{company ? "PERFIL AVALIADO" : "SUA NOTA PÚBLICA"}</p><h2>{selected?.nome || profile.nome || selectedUsername}</h2><p>@{selectedUsername}{selected?.nicho ? ` · ${selected.nicho}` : ""}</p></div>
           <div className="ratings-score"><strong>{visibleSummary?.nota_media == null ? "—" : visibleSummary.nota_media.toLocaleString("pt-BR", { minimumFractionDigits: 1, maximumFractionDigits: 2 })}</strong><span className="ratings-stars" aria-label={visibleSummary?.nota_media == null ? "Sem nota" : `Nota ${visibleSummary.nota_media} de 5`}>{visibleSummary?.nota_media == null ? "☆☆☆☆☆" : `${"★".repeat(Math.round(visibleSummary.nota_media))}${"☆".repeat(5 - Math.round(visibleSummary.nota_media))}`}</span><small>{visibleSummary?.quantidade_avaliacoes ?? "…"} {visibleSummary?.quantidade_avaliacoes === 1 ? "avaliação" : "avaliações"}</small></div>
         </section>

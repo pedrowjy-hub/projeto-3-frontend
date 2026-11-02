@@ -1,0 +1,25 @@
+.dash-nav-copy { display:flex; align-items:center; gap:.75rem; }
+.dash-account-details { flex:1; min-width:0; }
+.dash-account-name { display:flex; align-items:center; justify-content:space-between; gap:.35rem; }
+.dash-account-name strong { min-width:0; }
+.dash-profile-link { display:grid; place-items:center; width:2rem; height:2rem; flex-shrink:0; border-radius:.5rem; color:var(--dash-ink); }
+.dash-profile-link:hover,.dash-profile-link[aria-current="page"] { background:var(--appearance-soft); }
+.dash-profile-link:focus-visible { outline:2px solid var(--appearance-focus); outline-offset:2px; }
+.dash-nav-icon { display:grid; place-items:center; width:1.5rem; font-size:1.2rem; opacity:.85; }
+.dash-sidebar nav { gap:.25rem; }
+.dash-sidebar nav a { border:1px solid transparent; transition:background .15s,border-color .15s; padding:.7rem .85rem; }
+.dash-sidebar nav a[aria-current="page"] { border-color:var(--dash-line); box-shadow:inset 3px 0 0 var(--dash-ink); }
+.dash-sidebar nav a:focus-visible { outline:2px solid var(--appearance-focus); outline-offset:-2px; }
+.dash-sidebar nav .dash-nav-divider { margin-top:.6rem; border-top-color:var(--dash-line); }
+.profile-photo { width:100%; height:100%; display:block; object-fit:cover; border-radius:inherit; }
+.profile-avatar,.dash-avatar { overflow:hidden; flex-shrink:0; }
+.dash-card-cover { flex-shrink:0; overflow:hidden; }
+.dash-card-cover > span:has(.profile-photo) { width:6rem; height:6rem; border-radius:50%; overflow:hidden; }
+.dash-card-cover > small { background:var(--appearance-surface,#fffef8); color:var(--dash-ink); border-radius:1rem; padding:.3rem .55rem; }
+.profile-photo-editor { display:flex; align-items:center; gap:1.25rem; flex-wrap:wrap; padding:1.25rem; border:1px solid var(--dash-line); border-radius:.8rem; }
+.profile-photo-preview { display:grid; place-items:center; width:6rem; height:6rem; flex-shrink:0; background:var(--appearance-soft); border-radius:50%; overflow:hidden; }
+.profile-photo-editor label { flex:1; min-width:12rem; }
+.messages-start input { width:100%; box-sizing:border-box; padding:.85rem; border:1px solid var(--dash-line); border-radius:.5rem; color:var(--dash-ink); background:var(--appearance-surface,#fffef8); font:inherit; }
+.ratings-picker-fields { align-items:end; }
+.ratings-picker-fields > button { align-self:end; min-height:2.8rem; }
+@media(prefers-reduced-motion:reduce) { .dash-sidebar nav a { transition:none; } }
