@@ -41,13 +41,13 @@
   position:relative;
   overflow:hidden;
   border:0;
-  background:radial-gradient(ellipse at 95% 8%,#d9ec7566 0,transparent 27%),linear-gradient(120deg,#123d35,#1e5948 70%,#356b48);
+  background:linear-gradient(115deg,var(--appearance-primary),color-mix(in srgb,var(--appearance-primary) 85%,#000));
   color:#fffef8;
 }
 .explore-intro::after { position:absolute; right:3rem; bottom:-5.5rem; width:13rem; height:13rem; border:1px solid #ffffff32; border-radius:50%; content:""; pointer-events:none; }
-.explore-intro .dash-label { color:#d9ec75; }
+.explore-intro .dash-label { color:#fffef8; }
 .explore-intro h2 { position:relative; z-index:1; color:#fffef8; }
-.explore-intro > p:last-child { position:relative; z-index:1; color:#d4e1d5; }
+.explore-intro > p:last-child { position:relative; z-index:1; color:#fffef8; }
 .explore-filters { border-top:3px solid #d36b4c; background:linear-gradient(110deg,#fffef8,#f8f6ed); box-shadow:0 0.45rem 1.25rem #123d3509; }
 .explore-page input:focus-visible,.explore-page select:focus-visible { outline:2px solid var(--appearance-focus); outline-offset:2px; }
 .explore-page .dash-card { transition:transform .18s ease,box-shadow .18s ease; }

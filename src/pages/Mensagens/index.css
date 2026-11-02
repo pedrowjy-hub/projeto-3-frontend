@@ -15,19 +15,19 @@
   overflow:hidden;
   border-color:#d7e2d0;
   border-top:3px solid #df7955;
-  background:radial-gradient(ellipse at 100% 0,#d9ec7560,transparent 34%),linear-gradient(115deg,#f1f5e6,#fff4e9 72%,#f7efdc);
+  background:var(--appearance-surface);
   box-shadow:0 .5rem 1.5rem #123d350a;
 }
-.messages-start label { color:#315448; }
-.messages-start select { border-color:#c9d5bd; background:#fffef8; }
-.messages-start select:focus-visible { outline:2px solid #758c35; outline-offset:2px; }
+.messages-start label { color:var(--appearance-ink); }
+.messages-start select { border-color:var(--appearance-line); background:var(--appearance-surface); }
+.messages-start select:focus-visible { outline:2px solid var(--appearance-focus); outline-offset:2px; }
 .messages-page .contracts-primary { border-color:#17614e; background:#17614e; box-shadow:0 3px 0 #104537; }
 .messages-page .contracts-primary:hover:not(:disabled) { border-color:#104f40; background:#104f40; }
 .messages-workspace { border-color:#cbd8cd; box-shadow:0 .75rem 2rem #123d3510; }
-.messages-chat-list { background:linear-gradient(180deg,#eaf1e7,#f8f3e9); }
+.messages-chat-list { background:var(--appearance-subtle); }
 .messages-chat-list button { display:flex; align-items:center; gap:.75rem; border-color:transparent; }
-.messages-chat-list button:hover { border-color:#e4c2b1; background:#fff3e9; }
-.messages-chat-list button[aria-current] { border-color:#b5cfb8; background:linear-gradient(110deg,#dcebdc,#edf0d6); box-shadow:inset 3px 0 #248166; }
+.messages-chat-list button:hover { border-color:var(--appearance-line); background:var(--appearance-soft); }
+.messages-chat-list button[aria-current] { border-color:#b5cfb8; background:var(--appearance-soft); box-shadow:inset 3px 0 #248166; }
 .messages-chat-list .messages-chat-avatar,.messages-peer-avatar { display:grid; flex:0 0 2.5rem; width:2.5rem; height:2.5rem; place-items:center; margin:0; border:1px solid #d5b6a4; border-radius:50%; background:#f1d8c9; color:#8d4d38; font:600 .9375rem 'DM Sans',sans-serif; }
 .messages-chat-list button:nth-child(3n + 2) .messages-chat-avatar { border-color:#b8c9a1; background:#e0e9cd; color:#536b34; }
 .messages-chat-list button:nth-child(3n) .messages-chat-avatar { border-color:#c6c0e2; background:#e8e3f7; color:#5d5792; }
@@ -35,7 +35,7 @@
 .messages-chat-list .messages-chat-copy strong { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 .messages-chat-list .messages-chat-copy small { display:block; overflow:hidden; margin-top:.2rem; color:var(--dash-muted); font-size:.6875rem; text-overflow:ellipsis; white-space:nowrap; }
 .messages-chat-list .messages-chat-arrow { display:block; flex-shrink:0; margin:0; color:#cf7050; font-size:.875rem; }
-.messages-conversation-header { background:linear-gradient(100deg,#fff8ef,#f0f5e8); }
+.messages-conversation-header { background:var(--appearance-surface); }
 .messages-peer { display:flex; align-items:center; gap:.75rem; min-width:0; }
 .messages-peer > div { min-width:0; }
 .messages-peer h2 { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
@@ -49,8 +49,8 @@
 .messages-tabs button[aria-selected="true"] { border-color:#b7d2b9; background:#e2efdf; color:#215c49; box-shadow:inset 0 -2px #258266; }
 .messages-compose { border-color:#d7e2d0; background:linear-gradient(110deg,#fffdf8,#f4f6eb); }
 .messages-compose textarea { border-color:#cbd8c8; background:#fffefb; }
-.messages-compose textarea:focus-visible { outline:2px solid #758c35; outline-offset:2px; }
-.messages-empty { background:radial-gradient(ellipse at 50% 10%,#f7edda 0,transparent 65%); }
+.messages-compose textarea:focus-visible { outline:2px solid var(--appearance-focus); outline-offset:2px; }
+.messages-empty { background:var(--appearance-surface); }
 .messages-empty > span { display:grid; width:3.5rem; height:3.5rem; place-items:center; margin:0 auto 1rem; border:1px solid #eac0a8; border-radius:50%; background:#fff1e7; color:#ca6949; font-size:1.75rem; }
 .messages-empty h2,.messages-empty h3 { color:#254b3d; }
 .messages-page .messages-compose .contracts-primary { box-shadow:none; }
