@@ -13,12 +13,16 @@ import Contratos from "./pages/Contratos";
 import Denuncias from "./pages/Denuncias";
 import Analises from "./pages/Analises";
 import Avaliacoes from "./pages/Avaliacoes";
+import RecuperarSenha from "./pages/RecuperarSenha";
+import RedefinirSenha from "./pages/RedefinirSenha";
 
 function App() {
   return (
     <Routes>
       <Route path="/" element={<TelaPrincipal />} />
       <Route path="/login" element={<Login />} />
+      <Route path="/recuperar-senha" element={<RecuperarSenha />} />
+      <Route path="/redefinir-senha" element={<RedefinirSenha />} />
       <Route path="/cadastro" element={<Cadastro />} />
       <Route path="/admin" element={<PainelAdmin />} />
       <Route path="/inicio" element={<Dashboard />} />

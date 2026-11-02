@@ -2,6 +2,7 @@ import { Link } from "react-router";
 import { DEFAULT_APPEARANCE } from "../../services/aparencia";
 import useAppearance from "../../hooks/useAppearance";
 import Sidebar from "../Dashboard/Sidebar";
+import AlterarSenha from "./AlterarSenha";
 
 const themes = [{ value: "claro", label: "Claro", icon: "☀", detail: "Leve e acolhedor" }, { value: "escuro", label: "Escuro", icon: "☾", detail: "Para ambientes com pouca luz" }, { value: "sistema", label: "Do sistema", icon: "◐", detail: "Acompanha seu dispositivo" }];
 const colors = [{ value: "verde", label: "Verde", hex: "#275747" }, { value: "azul", label: "Azul", hex: "#254e85" }, { value: "ameixa", label: "Ameixa", hex: "#754064" }];
@@ -32,6 +33,7 @@ export default function Aparencia({ profile }) {
           <p className="settings-local-note">Suas escolhas acompanham sua conta em outros dispositivos. O tema “Do sistema” respeita a aparência de cada dispositivo.</p>
         </aside>
       </div>
+      <AlterarSenha />
     </div>
   </main>;
 }
