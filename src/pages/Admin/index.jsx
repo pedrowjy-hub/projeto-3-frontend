@@ -283,6 +283,11 @@ export default function PainelAdmin() {
                         <FormularioAssinatura
                             key={usuarioAssinatura.username}
                             usuario={usuarioAssinatura}
+                            onSalvo={(atualizado) => {
+                                setUsuarios(atuais => atuais.map(usuario => usuario.username === atualizado.username ? atualizado : usuario));
+                                setUsuarioAssinatura(null);
+                                setMensagem(`Assinatura de @${atualizado.username} atualizada com sucesso!`);
+                            }}
                             onCancelar={() => setUsuarioAssinatura(null)}
                         />
                     )}
