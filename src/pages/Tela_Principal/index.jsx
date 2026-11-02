@@ -69,12 +69,7 @@ export default function TelaPrincipal() {
             <p className="eyebrow"><span>✦</span> Onde boas parcerias começam</p>
             <h1>Encontre.<br />Conecte.<br /><em>Crie.</em></h1>
             <p className="hero-description">A plataforma que aproxima marcas e creators para transformar boas ideias em parcerias que geram resultado.</p>
-            <div className="audience-switch">
-              <button className="selected">Sou uma empresa</button>
-              <button>Sou creator</button>
-            </div>
-            <label className="hero-search"><span>⌕</span><input placeholder="Busque por nicho, nome ou cidade" /><button aria-label="Buscar">→</button></label>
-            <a className="text-link" href="#creators">Explorar agora <span>↘</span></a>
+
           </div>
 
           <div className="hero-visual">
