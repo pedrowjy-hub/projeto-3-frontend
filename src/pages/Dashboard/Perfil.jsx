@@ -1,9 +1,14 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
+import FotoPerfil from "../../components/FotoPerfil";
+import { prepararFoto } from "../../services/perfis";
 import { Link } from "react-router";
 import PlanoBadge from "../../components/PlanoBadge";
 import usePremiumStatus from "../../hooks/usePremiumStatus";
 
 const toForm = profile => ({
+  email: profile.email || "",
+  contato: profile.contato || "",
+  foto_perfil: profile.foto_perfil || "",
   nome: profile.nome || "",
   nicho: profile.nicho || "",
   descricao: profile.descricao || "",
@@ -19,8 +24,18 @@ export default function Perfil({ profile, onUpdate }) {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [processing, setProcessing] = useState(false);
+  const photoVersion = useRef(0);
   const company = profile.tipo_perfil === "empresa";
-  const initials = (profile.nome || profile.username).trim().split(/\s+/).slice(0, 2).map(word => word[0]).join("").toUpperCase();
+
+  async function pickPhoto(event) {
+    const file = event.target.files?.[0]; event.target.value = "";
+    if (!file) return;
+    const version = ++photoVersion.current; setProcessing(true); setError("");
+    try { const photo = await prepararFoto(file); if (version === photoVersion.current) setForm(previous => ({ ...previous, foto_perfil: photo })); }
+    catch (err) { if (version === photoVersion.current) setError(err.message); }
+    finally { if (version === photoVersion.current) setProcessing(false); }
+  }
 
   function change(event) {
     setForm(previous => ({ ...previous, [event.target.name]: event.target.value }));
@@ -28,7 +43,7 @@ export default function Perfil({ profile, onUpdate }) {
 
   async function save(event) {
     event.preventDefault();
-    if (saving) return;
+    if (saving || processing) return;
     setError("");
     setSuccess("");
     const data = {
@@ -39,7 +54,13 @@ export default function Perfil({ profile, onUpdate }) {
       setError("Preencha nome, nicho e ao menos uma plataforma.");
       return;
     }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) { setError("Informe um e-mail válido."); return; }
+    const telefone = form.contato.replace(/[()\s-]/g, "");
+    if (!/^[0-9]{10,11}$/.test(telefone)) { setError("Informe telefone com DDD e 10 ou 11 dígitos."); return; }
     const original = toForm(profile);
+    if (form.email.trim() !== original.email) data.email = form.email.trim();
+    if (form.contato.trim() !== original.contato) data.contato = telefone;
+    if (form.foto_perfil !== original.foto_perfil) data.foto_perfil = form.foto_perfil;
     for (const campo of ["cidade", "estado"]) {
       if (form[campo].trim() !== original[campo]) data[campo] = form[campo].trim();
     }
@@ -68,7 +89,7 @@ export default function Perfil({ profile, onUpdate }) {
     <header className="dash-header"><div><p className="dash-label">SEU ESPAÇO / PERFIL</p><h1>Meu perfil</h1></div><span className="dash-role">{company ? "Empresa" : "Influenciador"}</span></header>
     <section className="profile-summary" aria-label="Apresentação do perfil">
       <div className="profile-cover"><span aria-hidden="true">✦</span></div>
-      <div className="profile-identity"><span className={`profile-avatar${premium ? " profile-avatar-premium" : ""}`} aria-hidden="true">{initials}</span><div><div className="profile-name-line"><h2>{profile.nome || profile.username}</h2><PlanoBadge premium={premium} /></div><p>@{profile.username}</p></div><button type="button" className="profile-primary" disabled={editing} onClick={() => { setForm(toForm(profile)); setEditing(true); setSuccess(""); setError(""); }}>Editar perfil</button></div>
+      <div className="profile-identity"><span className={`profile-avatar${premium ? " profile-avatar-premium" : ""}`} aria-hidden="true"><FotoPerfil profile={profile} /></span><div><div className="profile-name-line"><h2>{profile.nome || profile.username}</h2><PlanoBadge premium={premium} /></div><p>@{profile.username}</p></div><button type="button" className="profile-primary" disabled={editing} onClick={() => { setForm(toForm(profile)); setEditing(true); setSuccess(""); setError(""); }}>Editar perfil</button></div>
     </section>
     <section className={`profile-plan${premium ? " profile-plan-premium" : ""}`} aria-labelledby="profile-plan-title">
       <div><p className="dash-label">SUA CONTA</p><h2 id="profile-plan-title">{premium ? "Você faz parte do Premium" : "Seu plano é Gratuito"}</h2><p>{premium ? <>Acesso Premium válido até <time dateTime={expiration.toISOString()}>{expiration.toLocaleString("pt-BR")}</time>.{profile.cancelamento_agendado && " A renovação está cancelada; você mantém o período já pago."}</> : "Explore perfis e acompanhe postagens. Chat e contratos são exclusivos do Premium. Negocie pelo chat e assine o contrato na plataforma, em modo de teste."}</p></div>
@@ -78,7 +99,11 @@ export default function Perfil({ profile, onUpdate }) {
     <section className="profile-details">
       <div className="profile-section-heading"><p className="dash-label">SUA APRESENTAÇÃO</p><h2>{editing ? "Editar informações" : "Sobre o perfil"}</h2><p>{company ? "Apresente sua empresa e os interesses da sua marca." : "Conte sobre seu conteúdo e ajude marcas a conhecerem seu trabalho."}</p></div>
       {editing ? <form onSubmit={save} aria-busy={saving}>
-        <fieldset disabled={saving} className="profile-fields">
+        <fieldset disabled={saving || processing} className="profile-fields">
+          <div className="profile-wide profile-photo-editor"><span className="profile-photo-preview"><FotoPerfil profile={{ ...profile, foto_perfil: form.foto_perfil }} /></span><label>Foto de perfil<input type="file" accept="image/jpeg,image/png,image/webp" onChange={pickPhoto} disabled={saving || processing} /><small>JPG, PNG ou WebP, até 5 MB. A imagem será recortada ao centro e aparecerá nos seus cards.</small></label><button type="button" className="profile-secondary" disabled={saving || processing || !form.foto_perfil} onClick={() => setForm(previous => ({ ...previous, foto_perfil: "" }))}>Remover foto</button></div>
+          {processing && <p role="status">Preparando foto…</p>}
+          <label>E-mail<input name="email" type="email" autoComplete="email" value={form.email} onChange={change} required /></label>
+          <label>Telefone / celular<input name="contato" type="tel" autoComplete="tel" value={form.contato} onChange={change} required placeholder="(11) 99999-9999" /><small>Informe o DDD e o número.</small></label>
           <label htmlFor="profile-name">{company ? "Nome da empresa" : "Nome"}<input id="profile-name" name="nome" value={form.nome} onChange={change} required /></label>
           <label htmlFor="profile-niche">{company ? "Segmento / nicho" : "Nicho de conteúdo"}<input id="profile-niche" name="nicho" value={form.nicho} onChange={change} required /></label>
           <label htmlFor="profile-city">Cidade <small>(opcional)</small><input id="profile-city" name="cidade" value={form.cidade} onChange={change} maxLength={100} autoComplete="address-level2" placeholder="Ex.: São Paulo" /></label>
@@ -87,8 +112,8 @@ export default function Perfil({ profile, onUpdate }) {
           <label className="profile-wide" htmlFor="profile-platforms">Plataformas<input id="profile-platforms" name="plataformas" value={form.plataformas} onChange={change} aria-describedby="profile-platform-help" required /><small id="profile-platform-help">Separe por vírgulas. Ex.: Instagram, YouTube, TikTok.</small></label>
         </fieldset>
         {error && <p className="profile-error" role="alert">{error}</p>}
-        <div className="profile-actions"><button type="button" className="profile-secondary" disabled={saving} onClick={() => { setEditing(false); setError(""); }}>Cancelar</button><button type="submit" className="profile-primary" disabled={saving}>{saving ? "Salvando…" : "Salvar alterações"}</button></div>
-      </form> : <><dl className="profile-info"><div><dt>Nome de usuário</dt><dd>@{profile.username}</dd></div><div><dt>{company ? "Segmento / nicho" : "Nicho de conteúdo"}</dt><dd>{profile.nicho || "Nicho não informado"}</dd></div><div><dt>Cidade</dt><dd>{toForm(profile).cidade || "Cidade não informada"}</dd></div><div><dt>Estado</dt><dd>{toForm(profile).estado || "Estado não informado"}</dd></div><div className="profile-wide"><dt>{company ? "Sobre a empresa" : "Biografia"}</dt><dd className="profile-bio">{profile.descricao || "Você ainda não adicionou uma apresentação. Edite seu perfil para contar mais sobre seu trabalho."}</dd></div></dl><h3 className="profile-platform-title">Plataformas</h3><div className="dash-platforms">{profile.plataformas?.length ? profile.plataformas.map(platform => <span key={platform}>{platform}</span>) : <p>Nenhuma plataforma informada.</p>}</div></>}
+        <div className="profile-actions"><button type="button" className="profile-secondary" disabled={saving || processing} onClick={() => { setEditing(false); setError(""); }}>Cancelar</button><button type="submit" className="profile-primary" disabled={saving || processing}>{saving ? "Salvando…" : "Salvar alterações"}</button></div>
+      </form> : <><dl className="profile-info"><div><dt>Nome de usuário</dt><dd>@{profile.username}</dd></div><div><dt>{company ? "Segmento / nicho" : "Nicho de conteúdo"}</dt><dd>{profile.nicho || "Nicho não informado"}</dd></div><div><dt>E-mail</dt><dd>{profile.email || "Não informado"}</dd></div><div><dt>Telefone / celular</dt><dd>{profile.contato || "Não informado"}</dd></div><div><dt>Cidade</dt><dd>{toForm(profile).cidade || "Cidade não informada"}</dd></div><div><dt>Estado</dt><dd>{toForm(profile).estado || "Estado não informado"}</dd></div><div className="profile-wide"><dt>{company ? "Sobre a empresa" : "Biografia"}</dt><dd className="profile-bio">{profile.descricao || "Você ainda não adicionou uma apresentação. Edite seu perfil para contar mais sobre seu trabalho."}</dd></div></dl><h3 className="profile-platform-title">Plataformas</h3><div className="dash-platforms">{profile.plataformas?.length ? profile.plataformas.map(platform => <span key={platform}>{platform}</span>) : <p>Nenhuma plataforma informada.</p>}</div></>}
     </section>
   </div>;
 }

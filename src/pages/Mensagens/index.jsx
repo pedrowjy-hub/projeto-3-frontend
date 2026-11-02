@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router";
+import { buscarPerfil, limparUsername } from "../../services/perfis";
 import Sidebar from "../Dashboard/Sidebar";
 import ContratosDaConversa from "../../components/ContratosDaConversa";
 import { getSession } from "../../services/session";
@@ -67,7 +68,7 @@ function Conversa({ chat, profile }) {
 export default function Mensagens() {
   const navigate = useNavigate();
   const [params, setParams] = useSearchParams();
-  const [profile, setProfile] = useState(null), [chats, setChats] = useState([]), [partners, setPartners] = useState([]);
+  const [profile, setProfile] = useState(null), [chats, setChats] = useState([]);
   const [partner, setPartner] = useState(() => params.get("parceiro") || ""), [error, setError] = useState("");
   const [loading, setLoading] = useState(true), [creating, setCreating] = useState(false), [attempt, setAttempt] = useState(0);
   const busy = useRef(false), alive = useRef(false);
@@ -88,10 +89,7 @@ export default function Mensagens() {
         setProfile(user);
         if (!hasActivePremium(user, Date.now())) return;
         const data = await listarConversas(token, controller.signal);
-        const response = await fetch(`/api/usuarios?tipo_perfil=${user.tipo_perfil === "empresa" ? "influenciador" : "empresa"}`, { signal: controller.signal });
-        if (!response.ok) throw new Error("Não foi possível carregar os perfis para conversar.");
-        const candidates = await response.json();
-        if (active) { setChats(data); setPartners(Array.isArray(candidates) ? candidates : []); }
+        if (active) setChats(data);
       } catch (err) { if (active) { if ([401, 422].includes(err.status)) navigate("/login", { replace: true }); else setError(err.message); } }
       finally { if (active) setLoading(false); }
     }
@@ -103,7 +101,11 @@ export default function Mensagens() {
     if (busy.current || !partner) return;
     busy.current = true; setCreating(true); setError("");
     try {
-      const chat = await iniciarConversa(localStorage.getItem("access_token"), partner);
+      const username = limparUsername(partner);
+      const target = await buscarPerfil(username);
+      if (target.username === profile.username) throw new Error("Escolha outro usuário para conversar.");
+      if (target.tipo_perfil === profile.tipo_perfil) throw new Error("A conversa deve ser entre uma empresa e um influenciador.");
+      const chat = await iniciarConversa(localStorage.getItem("access_token"), target.username);
       if (!alive.current) return;
       setChats(previous => [chat, ...previous.filter(item => item.id !== chat.id)]); setParams({ conversa: chat.id });
     } catch (err) { if (alive.current) setError(err.message); }
@@ -112,7 +114,7 @@ export default function Mensagens() {
   if (!profile) return <main className="dash-page dash-status"><p role={error ? "alert" : "status"}>{error || "Carregando mensagens…"}</p>{error && <button onClick={() => setAttempt(value => value + 1)}>Tentar novamente</button>}</main>;
   return <main className="dash-page messages-page"><Sidebar profile={profile} /><div className="dash-content messages-content"><header className="dash-header"><div><p className="dash-label">CONVERSE. NEGOCIE. COMBINE.</p><h1>Mensagens<span> ✦</span></h1></div><Link to="/contratos" className="contracts-button">Ver todos os contratos</Link></header>
     {!premium ? <section className="contracts-card"><h2>Converse e negocie com o Premium.</h2><p>Empresas e influenciadores precisam de Premium ativo para usar o chat e preparar contratos.</p><Link className="contracts-button contracts-primary" to="/planos">Conhecer o Premium ↗</Link></section> : <>
-      <form className="messages-start" onSubmit={start}><label htmlFor="conversation-partner">Nova negociação<select id="conversation-partner" required value={partner} onChange={event => setPartner(event.target.value)} disabled={loading || creating}><option value="">Escolha um perfil</option>{partners.map(item => <option key={item.username} value={item.username}>{item.nome || item.username} (@{item.username})</option>)}</select></label><button className="contracts-button contracts-primary" disabled={loading || creating || !partner}>{creating ? "Abrindo…" : "Iniciar conversa ↗"}</button><button type="button" className="contracts-button" disabled={creating || loading} onClick={() => setAttempt(value => value + 1)}>Atualizar lista</button></form>
+      <form className="messages-start" onSubmit={start}><label htmlFor="conversation-partner">Nova negociação<input id="conversation-partner" required value={partner} onChange={event => setPartner(event.target.value)} disabled={loading || creating} placeholder="Digite o username, ex.: @ana.creator" autoComplete="off" spellCheck={false} maxLength={200} /></label><button className="contracts-button contracts-primary" disabled={loading || creating || !limparUsername(partner)}>{creating ? "Abrindo…" : "Iniciar conversa ↗"}</button><button type="button" className="contracts-button" disabled={creating || loading} onClick={() => setAttempt(value => value + 1)}>Atualizar conversas</button></form>
       {error && <p className="contracts-error" role="alert">{error}</p>}
       {loading ? <p role="status">Carregando conversas…</p> : <div className="messages-workspace"><nav className="messages-chat-list" aria-label="Suas negociações">{chats.length ? chats.map(chat => <button type="button" key={chat.id} aria-current={selected?.id === chat.id ? "true" : undefined} onClick={() => setParams({ conversa: chat.id })}><span className="messages-chat-avatar" aria-hidden="true">{(chat.parceiro.nome || chat.parceiro.username).slice(0, 1).toLocaleUpperCase("pt-BR")}</span><span className="messages-chat-copy"><strong>{chat.parceiro.nome}</strong><small>@{chat.parceiro.username}</small></span><span className="messages-chat-arrow" aria-hidden="true">↗</span></button>) : <p>Nenhuma conversa por enquanto.</p>}</nav>{selected ? <Conversa key={selected.id} chat={selected} profile={profile} /> : <div className="messages-empty"><span aria-hidden="true">↗</span><h2>Uma boa conversa abre possibilidades.</h2><p>Escolha uma negociação ou inicie uma nova. O contrato ficará vinculado ao chat de vocês.</p></div>}</div>}
     </>}

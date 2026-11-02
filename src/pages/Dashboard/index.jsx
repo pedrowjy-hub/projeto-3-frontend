@@ -1,3 +1,4 @@
+import FotoPerfil from "../../components/FotoPerfil";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router";
 import { getSession } from "../../services/session";
@@ -71,7 +72,7 @@ export default function Dashboard() {
       <section id="dash-results" className="dash-results">
         <div className="dash-results-header"><div><p className="dash-label">{company ? "TALENTOS DA COMUNIDADE" : "NOVAS CONEXÕES"}</p><h2>{company ? "Influenciadores para conhecer" : "Oportunidades de parceria"}</h2></div>{company && <label className="dash-search"><span>Buscar influenciadores</span><input type="search" placeholder="Nome ou nicho" value={search} onChange={e => setSearch(e.target.value)} /></label>}</div>
         {error ? <p className="dash-empty" role="alert">{error}</p> : loading ? <p role="status">Carregando influenciadores…</p> : company ? <div className="dash-grid">{filtered.map((creator, i) => <article className="dash-card" key={creator.username}>
-          <div className={`dash-card-cover dash-cover-${i % 3}`}><span>{(creator.nome || creator.username).slice(0, 2).toUpperCase()}</span><small>CREATOR</small></div>
+          <div className={`dash-card-cover dash-cover-${i % 3}`}><span><FotoPerfil profile={creator} /></span><small>CREATOR</small></div>
           <div className="dash-card-body"><h3>{creator.nome || creator.username}</h3><p className="dash-handle">@{creator.username}</p><p className="dash-niche">{creator.nicho || "Nicho não informado"}</p><p className="dash-bio">{creator.descricao || "Conheça este creator e descubra novas possibilidades de parceria."}</p><div className="dash-platforms">{(creator.plataformas || []).map(platform => <span key={platform}>{platform}</span>)}</div></div>
         </article>)}{filtered.length === 0 && <div className="dash-empty"><h3>{search ? "Nenhum resultado encontrado" : "Novos talentos em breve"}</h3><p>{search ? "Tente buscar por outro nome ou nicho." : "Os influenciadores cadastrados aparecerão aqui."}</p></div>}</div> : <div className="dash-empty"><span aria-hidden="true">↗</span><h3>Boas oportunidades estão por vir.</h3><p>As campanhas publicadas pelas empresas aparecerão aqui quando estiverem disponíveis.</p></div>}
       </section>
