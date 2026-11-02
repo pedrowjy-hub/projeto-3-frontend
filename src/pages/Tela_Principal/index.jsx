@@ -100,7 +100,7 @@ export default function TelaPrincipal() {
         <div className="filters"><button className="active">Todos</button><button>Moda</button><button>Viagem</button><button>Esporte</button></div>
         <div className="creator-grid">
           {creators.map((creator) => <article className="creator-card" key={creator.name}>
-            <div className="creator-image"><img src={creator.image} alt={creator.name} /><button aria-label={`Adicionar ${creator.name} aos favoritos`}>♡</button>{creator.featured && <span className="featured">EM DESTAQUE</span>}</div>
+            <div className="creator-image"><img src={creator.image} alt={creator.name} />{creator.featured && <span className="featured">EM DESTAQUE</span>}</div>
             <div className="creator-details"><div className="creator-title"><div><h3>{creator.name} <b>✓</b></h3><p>{creator.handle} &nbsp;·&nbsp; {creator.place}</p></div><span className="score">★ {creator.rating}</span></div><p className="category">{creator.category}</p><div className="creator-stats"><span><b>{creator.followers}</b><small>SEGUIDORES</small></span><span><b>{creator.engagement}</b><small>ENGAJAMENTO</small></span><span><b>{creator.projects}</b><small>TRABALHOS</small></span></div></div>
           </article>)}
         </div>
