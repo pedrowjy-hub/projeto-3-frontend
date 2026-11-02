@@ -25,3 +25,27 @@ export async function prepararFoto(file) {
     return canvas.toDataURL("image/jpeg", 0.85);
   } finally { bitmap.close(); }
 }
+
+
+const normalizarBusca = value => String(value || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLocaleLowerCase("pt-BR").trim();
+
+export function filtrarSugestoes(perfis, busca, tipoPerfil, usernameAtual) {
+  const termo = normalizarBusca(limparUsername(busca));
+  if (!termo) return [];
+  return perfis.filter(perfil => perfil.username && perfil.username !== usernameAtual
+    && perfil.tipo_perfil === tipoPerfil && perfil.ativo !== false && perfil.papel !== "admin"
+    && [perfil.nome, perfil.username].some(valor => normalizarBusca(valor).includes(termo)))
+    .sort((a, b) => {
+      const prioridade = perfil => normalizarBusca(perfil.username) === termo ? 0
+        : normalizarBusca(perfil.username).startsWith(termo) ? 1 : 2;
+      return prioridade(a) - prioridade(b) || (a.nome || a.username).localeCompare(b.nome || b.username, "pt-BR");
+    }).slice(0, 8);
+}
+
+export async function listarPerfis(tipoPerfil, signal) {
+  const response = await fetch(`/api/usuarios?tipo_perfil=${encodeURIComponent(tipoPerfil)}`, { signal });
+  if (!response.ok) throw new Error("Não foi possível carregar as sugestões. Tente novamente.");
+  const data = await response.json();
+  if (!Array.isArray(data)) throw new Error("Não foi possível carregar as sugestões. Tente novamente.");
+  return data;
+}

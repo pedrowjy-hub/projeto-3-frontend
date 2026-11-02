@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router";
 import { buscarPerfil } from "../../services/perfis";
 import Sidebar from "../Dashboard/Sidebar";
+import BuscaUsuario from "../../components/BuscaUsuario";
 import { getSession } from "../../services/session";
 import usePremiumStatus from "../../hooks/usePremiumStatus";
 import "../Dashboard/index.css";
@@ -203,7 +204,13 @@ export default function Avaliacoes() {
         <div className="ratings-panel-heading"><div><p className="dash-label">ENCONTRE UM PERFIL</p><h2 id="ratings-picker-title">Quem você quer avaliar?</h2></div><span aria-hidden="true">⌕</span></div>
         {error && <p className="ratings-error" role="alert">{error}</p>}
         <form className="ratings-picker-fields" onSubmit={searchProfile}>
-          <label htmlFor="ratings-search">Username do influenciador<input id="ratings-search" type="search" value={search} onChange={event => setSearch(event.target.value)} placeholder="Digite o username, com ou sem @" required maxLength={200} autoComplete="off" spellCheck={false} disabled={searching || saving} /></label>
+          <BuscaUsuario id="ratings-search" label="Nome ou username do influenciador" value={search} onChange={setSearch}
+            tipoPerfil="influenciador" usernameAtual={profile.username} disabled={searching || saving}
+            onSelect={target => {
+              lookup.current?.abort();
+              setInfluencers([target]);
+              chooseInfluencer(target.username);
+            }} />
           <button className="ratings-primary" type="submit" disabled={searching || saving || !search.trim()}>{searching ? "Buscando…" : "Buscar perfil →"}</button>
         </form>
       </section>}
