@@ -108,7 +108,7 @@ export default function Postagens() {
       {success && <p className="posts-success" role="status">{success}</p>}
       <dialog ref={dialogRef} className="posts-dialog dash-page" aria-labelledby="posts-compose-title" onCancel={event => { event.preventDefault(); if (!saving) setComposing(false); }}>
       <section className="posts-compose">
-        <div className="posts-compose-header"><div><p className="dash-label">COMPARTILHE COM A COMUNIDADE</p><h2 id="posts-compose-title">Nova postagem</h2><p>Divulgue um trabalho, apresente uma ideia ou publique uma oportunidade.</p></div><button className="posts-close" type="button" aria-label="Fechar nova postagem" disabled={saving} onClick={() => setComposing(false)}>×</button></div>
+        <div className="posts-compose-header"><div><p className="dash-label">COMPARTILHE COM A COMUNIDADE</p><h2 id="posts-compose-title">Nova postagem</h2><p>Divulgue um trabalho, apresente uma ideia ou publique uma oportunidade.</p></div><button className="posts-close" type="button" aria-label="Fechar nova postagem" disabled={saving} onClick={() => setComposing(false)}><svg viewBox="0 0 20 20" aria-hidden="true"><path d="m5 5 10 10M15 5 5 15" /></svg></button></div>
         <form onSubmit={publish}>
           <fieldset disabled={saving}><legend className="posts-sr-only">Nova postagem</legend>
             <label htmlFor="post-title">Título<input id="post-title" required autoFocus value={title} onChange={event => setTitle(event.target.value)} placeholder="Ex.: Procura-se creator para uma campanha" /></label>

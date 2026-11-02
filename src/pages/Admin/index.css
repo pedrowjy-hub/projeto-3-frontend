@@ -66,7 +66,8 @@
 .admin-tipo { padding: 0.3125rem 0.625rem; border: 0.0625rem solid #e4e7da; border-radius: 0.375rem; color: #5b6d55; font-size: 0.6875rem; }
 .admin-assinatura { display: inline-flex; align-items: center; gap: 0.4375rem; color: #7e8576; font-size: 0.6875rem; }
 .admin-assinatura > span { font-size: 0.4375rem; color: #a9ae9f; }
-.admin-assinatura-ativa, .admin-assinatura-ativa > span { color: #497443; }
+.admin-assinatura-ativa { color: #497443; font-weight: 700; }
+.admin-assinatura-ativa > span { color: #497443; }
 .admin-lista-rodape { display: flex; justify-content: space-between; gap: 1rem; border-top: 0.0625rem solid #e9e9e0; padding: 1rem 1.75rem; color: #7b8575; font-size: 0.6875rem; }
 .admin-lista-rodape > span { font-family: Georgia, serif; font-style: italic; }
 .admin-vazio { min-height: 14.375rem; padding: 2.75rem 1.5rem; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 0.75rem; text-align: center; color: #6b7568; }
@@ -105,7 +106,7 @@
     .admin-paginacao { width: 100%; justify-content: space-between; gap: 0.5rem; }
 }
 
-.admin-assinatura-acoes { display: flex; align-items: center; gap: 1rem; }
+.admin-assinatura-acoes { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
 .admin-tabela .admin-botao { padding: 0.5rem 0.875rem; }
 .admin-usuario-link {
     padding: 0;
