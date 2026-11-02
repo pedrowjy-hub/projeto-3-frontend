@@ -83,7 +83,7 @@ export default function Login() {
                         required 
                     />
 
-                    <div className="login-password-label"><label htmlFor="senha">Senha</label><a href="#recuperar-senha">Esqueci minha senha</a></div>
+                    <div className="login-password-label"><label htmlFor="senha">Senha</label><Link to="/recuperar-senha">Esqueci minha senha</Link></div>
                     <div className="login-password">
                     <input 
                         id="senha"

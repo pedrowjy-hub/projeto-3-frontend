@@ -40,6 +40,16 @@
 .settings-preview-star { margin-left:auto; color:var(--appearance-primary); }
 .settings-page .settings-primary { display:flex; justify-content:space-between; gap:1rem; padding:.875rem 1rem; border-radius:.5rem; background:var(--appearance-primary); color:#fffef8; font-size:.8125rem; font-weight:600; }
 .settings-local-note { padding:0 .5rem; font-size:.75rem; line-height:1.7; color:var(--dash-muted); }
+.settings-security-card { max-width:62rem; margin-top:1.5rem; }
+.settings-password-form { display:grid; gap:.625rem; }
+.settings-password-form label { display:block; margin-bottom:.375rem; font-size:.75rem; font-weight:700; color:var(--dash-ink); }
+.settings-password-form input { width:100%; padding:.75rem .875rem; border:1px solid var(--dash-line); border-radius:.5rem; background:var(--appearance-bg); color:var(--dash-ink); font:inherit; }
+.settings-password-form input:focus { outline:3px solid var(--appearance-focus); outline-offset:2px; }
+.settings-password-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:1rem; margin-top:.5rem; }
+.settings-password-actions { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:1rem; margin-top:.75rem; }
+.settings-password-actions p { margin:0; color:var(--dash-muted); font-size:.75rem; }
+.settings-password-submit { background:var(--appearance-primary); color:#fffef8; }
+.settings-password-error { margin:.25rem 0 0; color:#a82e29; font-size:.75rem; }
 .settings-page :focus-visible { outline:3px solid var(--appearance-focus); outline-offset:3px; }
 @media(max-width:75rem) { .settings-layout { grid-template-columns:minmax(0,1fr); }.settings-preview-column { position:static; }.settings-preview { max-width:none; } }
 @media(max-width:43.75rem) { .settings-card { padding:1.25rem; }.settings-theme-options,.settings-size-options { grid-template-columns:1fr; }.settings-option { padding:.875rem 1rem .875rem 2.75rem; }.settings-option input { position:absolute; left:1rem; top:1rem; }.settings-save { align-items:stretch; }.settings-save button { width:100%; } }
@@ -52,4 +62,7 @@
   .settings-page .dash-account { display:none; }
   .settings-card-heading { align-items:flex-start; }
   .settings-color { flex:1 1 8rem; }
+  .settings-password-grid { grid-template-columns:minmax(0,1fr); }
+  .settings-password-actions { align-items:stretch; }
+  .settings-password-submit { width:100%; }
 }
