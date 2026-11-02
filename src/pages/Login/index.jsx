@@ -50,7 +50,7 @@ export default function Login() {
         const session = await getSession(dados.access_token);
         navigate(session.papel === "admin" ? "/admin" : "/inicio");
         } catch (error) {
-            setErro(error instanceof TypeError ? "Não foi possível conectar ao servidor. Confira se o backend está rodando em http://127.0.0.1:5000." : error.message);
+            setErro(error instanceof TypeError ? "Não foi possível conectar à API. Confira sua conexão e tente novamente." : error.message);
         } finally {
             setEnviando(false);
         }
