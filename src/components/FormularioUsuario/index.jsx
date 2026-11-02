@@ -69,7 +69,6 @@ export default function FormularioUsuario({ onUsuarioCadastrado, onCancelar, onS
                 .split(",")
                 .map((plataforma) => plataforma.trim())
                 .filter((plataforma) => plataforma !== ""),
-            assinatura: false,
         };
 
         try {
