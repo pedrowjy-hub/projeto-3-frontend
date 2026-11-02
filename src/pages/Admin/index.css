@@ -19,7 +19,8 @@
 .admin-topo { border-bottom: 0.0625rem solid var(--admin-borda); background: #faf8f1; }
 .admin-topo-conteudo { max-width: 78.5rem; padding: 1.375rem 2.5rem; margin: auto; display: flex; align-items: center; gap: 1.625rem; }
 .admin-marca { display: flex; align-items: center; gap: 0.5625rem; color: var(--admin-verde); text-decoration: none; font-size: 1.75rem; font-weight: 800; letter-spacing: -0.09375rem; }
-.admin-marca-simbolo { display: grid; place-items: center; width: 2.25rem; height: 2.25rem; border-radius: 50%; background: var(--admin-verde); color: var(--admin-creme); font-size: 1.75rem; font-weight: 400; letter-spacing: 0; }
+.admin-marca-simbolo { display: grid; place-items: center; flex-shrink: 0; width: 2.25rem; height: 2.25rem; border-radius: 50%; background: var(--admin-verde); color: var(--admin-creme); }
+.admin-marca-simbolo svg { display: block; width: 1.5rem; height: 1.5rem; }
 .admin-marca-ponto { color: #a95e42; margin-left: -0.5rem; }
 .admin-area { border-left: 0.0625rem solid #d6d9ce; padding-left: 1.625rem; color: #68746b; font-size: 0.8125rem; }
 .admin-perfil { display: flex; gap: 0.625rem; align-items: center; margin-left: auto; font-size: 0.75rem; font-weight: 600; }

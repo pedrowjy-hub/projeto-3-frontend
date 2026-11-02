@@ -247,7 +247,11 @@ export default function PainelAdmin() {
             <header className="admin-topo">
                 <div className="admin-topo-conteudo">
                     <a className="admin-marca" href="/admin" aria-label="Nexo — painel administrativo">
-                        <span className="admin-marca-simbolo" aria-hidden="true">✳</span> nexo<span className="admin-marca-ponto">.</span>
+                        <span className="admin-marca-simbolo" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.25" focusable="false">
+                                <path d="M12 2v20M2 12h20M5 5l14 14M5 19 19 5" />
+                            </svg>
+                        </span> nexo<span className="admin-marca-ponto">.</span>
                     </a>
                     <span className="admin-area">Administração</span>
                     <span className="admin-perfil"><span aria-hidden="true">A</span> Painel de gestão</span>
